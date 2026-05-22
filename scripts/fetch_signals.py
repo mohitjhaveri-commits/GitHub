@@ -137,44 +137,98 @@ def fetch_stooq(symbol: str) -> dict | None:
     }
 
 
-# India 10Y G-Sec is awkward - no FRED daily, no Yahoo ticker. Try a few
-# Stooq symbol variants, then fall back to scraping worldgovernmentbonds.com.
-INDIA_10Y_STOOQ_SYMBOLS = ["10iny.b", "10indy.b", "in10y.b", "inygov10.b"]
+# India 10Y G-Sec: scrape investing.com (no FRED daily series, no Yahoo
+# ticker, Stooq coverage is patchy). investing.com is bot-protected, so
+# we use a browser-style User-Agent and parse the __NEXT_DATA__ JSON
+# embedded in the page.
 
-
-def fetch_india_10y_wgb() -> dict | None:
-    """Scrape worldgovernmentbonds.com as a last-resort fallback."""
-    url = "http://www.worldgovernmentbonds.com/country/india/"
-    try:
-        html = http_get(url, timeout=20)
-    except Exception as e:
-        print(f"[wgb india] {e}", file=sys.stderr)
-        return None
-    # Page has a row like: "India 10 Years" ... "<td>6.789%</td>" etc.
-    # We look for the first percentage after the "10 years" label.
-    m = re.search(r"10\s*years.*?(\d+(?:\.\d+)?)\s*%", html, re.IGNORECASE | re.DOTALL)
-    if not m:
-        print("[wgb india] could not extract yield", file=sys.stderr)
-        return None
-    try:
-        val = float(m.group(1))
-    except ValueError:
-        return None
-    return {
-        "value": val,
-        "previous": None,
-        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-        "source": "worldgovernmentbonds.com",
-    }
+INVESTING_URL = "https://www.investing.com/rates-bonds/india-10-year-bond-yield"
+BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "identity",
+    "Cache-Control": "no-cache",
+}
 
 
 def fetch_india_10y() -> dict | None:
-    for sym in INDIA_10Y_STOOQ_SYMBOLS:
-        result = fetch_stooq(sym)
-        if result and result.get("value") is not None:
-            return result
-    print("[india_10y] all Stooq variants failed, trying WGB", file=sys.stderr)
-    return fetch_india_10y_wgb()
+    """Fetch India 10Y G-Sec yield from investing.com."""
+    try:
+        req = urllib.request.Request(INVESTING_URL, headers=BROWSER_HEADERS)
+        with urllib.request.urlopen(req, timeout=30) as r:
+            html = r.read().decode("utf-8", errors="replace")
+    except Exception as e:
+        print(f"[investing india10y] fetch: {e}", file=sys.stderr)
+        return None
+
+    value: float | None = None
+    previous: float | None = None
+    asof: str | None = None
+
+    # Preferred: parse the __NEXT_DATA__ JSON island.
+    m = re.search(
+        r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>',
+        html,
+        re.DOTALL,
+    )
+    if m:
+        try:
+            blob = m.group(1)
+            # Walk the stringified JSON with regex - the field names vary
+            # by page generation; this is more robust than navigating the
+            # tree.
+            m_last = re.search(r'"last(?:Price)?"\s*:\s*"?([\d,]+\.\d+)"?', blob)
+            if m_last:
+                value = float(m_last.group(1).replace(",", ""))
+            m_prev = re.search(
+                r'"(?:prevClose(?:Price)?|previousClose|prevClosePrice)"\s*:\s*"?([\d,]+\.\d+)"?',
+                blob,
+            )
+            if m_prev:
+                previous = float(m_prev.group(1).replace(",", ""))
+            m_date = re.search(r'"(?:lastUpdated|asOfDate|lastTradeTime)"\s*:\s*"([^"]+)"', blob)
+            if m_date:
+                asof = m_date.group(1)[:10]
+        except Exception as e:
+            print(f"[investing india10y] next_data parse: {e}", file=sys.stderr)
+
+    # Fallback: try the rendered DOM attributes.
+    if value is None:
+        m_v = re.search(
+            r'data-test="instrument-price-last"[^>]*>\s*([\d,]+\.?\d*)\s*<',
+            html,
+        )
+        if m_v:
+            try:
+                value = float(m_v.group(1).replace(",", ""))
+            except ValueError:
+                pass
+
+    if previous is None:
+        m_p = re.search(
+            r'data-test="prevClose"[^>]*>\s*([\d,]+\.?\d*)\s*<',
+            html,
+        )
+        if m_p:
+            try:
+                previous = float(m_p.group(1).replace(",", ""))
+            except ValueError:
+                pass
+
+    if value is None:
+        print("[investing india10y] could not extract yield from page", file=sys.stderr)
+        return None
+
+    return {
+        "value": value,
+        "previous": previous,
+        "asof": asof or datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "source": "investing.com",
+    }
 
 
 # -------- CoinGecko --------
