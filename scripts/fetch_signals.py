@@ -250,41 +250,95 @@ def _fetch_india_10y_html() -> dict | None:
     }
 
 
-def _fetch_india_10y_api() -> dict | None:
-    from datetime import timedelta
+INVESTING_API_HEADERS = {
+    **BROWSER_HEADERS,
+    "Accept": "application/json, text/plain, */*",
+    "Domain-Id": "www",
+    "Referer": INVESTING_URL,
+    "Origin": "https://www.investing.com",
+}
 
-    end = datetime.now(timezone.utc).date()
-    start = end - timedelta(days=14)
-    url = INVESTING_API_URL.format(start=start.isoformat(), end=end.isoformat())
-    headers = {
-        **BROWSER_HEADERS,
-        "Accept": "application/json, text/plain, */*",
-        "Domain-Id": "www",
-        "Referer": INVESTING_URL,
-        "Origin": "https://www.investing.com",
-    }
+# Candidate pair IDs for India 10Y G-Sec on investing.com. The first
+# that returns data wins. 23867 was tried in the previous version and
+# returned empty - keeping it last so we cycle through the others first.
+INDIA_10Y_PAIR_IDS = [1056564, 1056565, 23866, 23867, 941706]
+
+
+def _resolve_india_10y_pair_id() -> int | None:
+    """Try investing.com's search API to discover the correct pair id."""
+    url = "https://api.investing.com/api/financialdata/search?query=india+10+year+bond"
+    headers = {**INVESTING_API_HEADERS}
     try:
-        status, body = _fetch_with_status(url, headers)
+        status, body = _fetch_with_status(url, headers, timeout=20)
     except Exception as e:
-        print(f"[investing api] network: {e}", file=sys.stderr)
+        print(f"[investing search] network: {e}", file=sys.stderr)
         return None
     if status != 200:
         print(
-            f"[investing api] HTTP {status}; first 200 chars: {body[:200]!r}",
+            f"[investing search] HTTP {status}; first 200 chars: {body[:200]!r}",
             file=sys.stderr,
         )
         return None
     try:
         data = json.loads(body)
     except Exception as e:
+        print(f"[investing search] not JSON: {e}", file=sys.stderr)
+        return None
+    # The response shape varies; try a few likely paths.
+    candidates: list[dict] = []
+    if isinstance(data, dict):
+        for key in ("data", "quotes", "results"):
+            v = data.get(key)
+            if isinstance(v, list):
+                candidates.extend(v)
+            elif isinstance(v, dict):
+                for sub in v.values():
+                    if isinstance(sub, list):
+                        candidates.extend(sub)
+    print(f"[investing search] {len(candidates)} candidates", file=sys.stderr)
+    for c in candidates:
+        name = (c.get("name") or c.get("description") or "").lower()
+        if "india" in name and "10" in name and ("bond" in name or "yield" in name):
+            for k in ("pair_ID", "pairId", "pair_id", "id"):
+                if k in c:
+                    pid = c[k]
+                    try:
+                        pid_i = int(pid)
+                        print(f"[investing search] matched '{name}' -> pair_id {pid_i}", file=sys.stderr)
+                        return pid_i
+                    except (TypeError, ValueError):
+                        continue
+    return None
+
+
+def _try_pair_id(pair_id: int) -> dict | None:
+    from datetime import timedelta
+
+    end = datetime.now(timezone.utc).date()
+    start = end - timedelta(days=14)
+    url = (
+        "https://api.investing.com/api/financialdata/historical/"
+        f"{pair_id}?start-date={start.isoformat()}&end-date={end.isoformat()}"
+        "&time-frame=Daily&add-missing-rows=false"
+    )
+    try:
+        status, body = _fetch_with_status(url, INVESTING_API_HEADERS)
+    except Exception as e:
+        print(f"[investing api {pair_id}] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
         print(
-            f"[investing api] not JSON: {e}; first 200 chars: {body[:200]!r}",
+            f"[investing api {pair_id}] HTTP {status}; first 200 chars: {body[:200]!r}",
             file=sys.stderr,
         )
         return None
+    try:
+        data = json.loads(body)
+    except Exception as e:
+        print(f"[investing api {pair_id}] not JSON: {e}", file=sys.stderr)
+        return None
     rows = data.get("data") if isinstance(data, dict) else None
     if not rows:
-        print(f"[investing api] no data rows: {str(data)[:200]!r}", file=sys.stderr)
         return None
     rows = sorted(rows, key=lambda r: r.get("rowDateRaw", 0), reverse=True)
     latest = rows[0]
@@ -295,15 +349,34 @@ def _fetch_india_10y_api() -> dict | None:
             float(prev.get("last_close") or prev.get("price")) if prev else None
         )
     except (TypeError, ValueError) as e:
-        print(f"[investing api] parse: {e}; latest={latest}", file=sys.stderr)
+        print(f"[investing api {pair_id}] parse: {e}; latest={latest}", file=sys.stderr)
         return None
     asof = latest.get("rowDate") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
     return {
         "value": value,
         "previous": previous,
         "asof": asof,
-        "source": "investing.com (api)",
+        "source": f"investing.com (api pair {pair_id})",
     }
+
+
+def _fetch_india_10y_api() -> dict | None:
+    # Step 1: try search to resolve the right pair id.
+    resolved = _resolve_india_10y_pair_id()
+    candidates: list[int] = []
+    if resolved is not None:
+        candidates.append(resolved)
+    for pid in INDIA_10Y_PAIR_IDS:
+        if pid not in candidates:
+            candidates.append(pid)
+
+    # Step 2: try each candidate.
+    for pid in candidates:
+        result = _try_pair_id(pid)
+        if result:
+            return result
+        print(f"[investing api {pid}] empty data", file=sys.stderr)
+    return None
 
 
 def fetch_india_10y() -> dict | None:
