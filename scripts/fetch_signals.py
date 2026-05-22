@@ -17,6 +17,7 @@ import csv
 import io
 import json
 import os
+import re
 import sys
 import time
 import urllib.parse
@@ -115,10 +116,12 @@ def fetch_stooq(symbol: str) -> dict | None:
         return None
     rows = list(csv.reader(io.StringIO(text)))
     if len(rows) < 2:
+        print(f"[stooq {symbol}] empty/short body: {text!r}", file=sys.stderr)
         return None
     row = rows[1]
     # cols: Symbol,Date,Time,Open,High,Low,Close,Volume
     if len(row) < 7 or row[6] in ("", "N/D"):
+        print(f"[stooq {symbol}] no close: row={row}", file=sys.stderr)
         return None
     try:
         close = float(row[6])
@@ -132,6 +135,46 @@ def fetch_stooq(symbol: str) -> dict | None:
         "asof": asof,
         "source": f"Stooq ({symbol})",
     }
+
+
+# India 10Y G-Sec is awkward - no FRED daily, no Yahoo ticker. Try a few
+# Stooq symbol variants, then fall back to scraping worldgovernmentbonds.com.
+INDIA_10Y_STOOQ_SYMBOLS = ["10iny.b", "10indy.b", "in10y.b", "inygov10.b"]
+
+
+def fetch_india_10y_wgb() -> dict | None:
+    """Scrape worldgovernmentbonds.com as a last-resort fallback."""
+    url = "http://www.worldgovernmentbonds.com/country/india/"
+    try:
+        html = http_get(url, timeout=20)
+    except Exception as e:
+        print(f"[wgb india] {e}", file=sys.stderr)
+        return None
+    # Page has a row like: "India 10 Years" ... "<td>6.789%</td>" etc.
+    # We look for the first percentage after the "10 years" label.
+    m = re.search(r"10\s*years.*?(\d+(?:\.\d+)?)\s*%", html, re.IGNORECASE | re.DOTALL)
+    if not m:
+        print("[wgb india] could not extract yield", file=sys.stderr)
+        return None
+    try:
+        val = float(m.group(1))
+    except ValueError:
+        return None
+    return {
+        "value": val,
+        "previous": None,
+        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "source": "worldgovernmentbonds.com",
+    }
+
+
+def fetch_india_10y() -> dict | None:
+    for sym in INDIA_10Y_STOOQ_SYMBOLS:
+        result = fetch_stooq(sym)
+        if result and result.get("value") is not None:
+            return result
+    print("[india_10y] all Stooq variants failed, trying WGB", file=sys.stderr)
+    return fetch_india_10y_wgb()
 
 
 # -------- CoinGecko --------
@@ -190,7 +233,7 @@ SIGNALS: dict[str, tuple[str, str]] = {
     # India
     "nifty":    ("yahoo", "^NSEI"),
     "indiavix": ("yahoo", "^INDIAVIX"),
-    "in10y":    ("stooq", "10iny.b"),
+    "in10y":    ("india10y", ""),
 }
 
 
@@ -201,6 +244,8 @@ def fetch_one(kind: str, target: str) -> dict | None:
         return fetch_yahoo(target)
     if kind == "stooq":
         return fetch_stooq(target)
+    if kind == "india10y":
+        return fetch_india_10y()
     return None
 
 
