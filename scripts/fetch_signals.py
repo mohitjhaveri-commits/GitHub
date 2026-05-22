@@ -75,6 +75,25 @@ def fetch_fred(series: str) -> dict | None:
 
 # -------- Yahoo Finance v8 chart API --------
 
+def fetch_yahoo_history(symbol: str, range_: str = "60d") -> list[tuple[int, float]] | None:
+    """Return list of (timestamp, close) for the given range, oldest first."""
+    qs = urllib.parse.urlencode({"range": range_, "interval": "1d"})
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}?{qs}"
+    try:
+        data = http_get_json(url)
+    except Exception as e:
+        print(f"[yahoo-hist {symbol}] {e}", file=sys.stderr)
+        return None
+    try:
+        result = data["chart"]["result"][0]
+        closes = result["indicators"]["quote"][0]["close"]
+        timestamps = result["timestamp"]
+    except (KeyError, IndexError, TypeError) as e:
+        print(f"[yahoo-hist {symbol}] bad payload: {e}", file=sys.stderr)
+        return None
+    return [(t, float(c)) for t, c in zip(timestamps, closes) if c is not None]
+
+
 def fetch_yahoo(symbol: str) -> dict | None:
     qs = urllib.parse.urlencode({"range": "10d", "interval": "1d"})
     url = f"https://query1.finance.yahoo.com/v8/finance/chart/{urllib.parse.quote(symbol)}?{qs}"
@@ -463,6 +482,115 @@ def _fetch_india_10y_wgb() -> dict | None:
     }
 
 
+# -------- Derived from Yahoo history --------
+
+def fetch_pct_change(symbol: str, lookback_trading_days: int) -> dict | None:
+    """Return the % change in `symbol`'s close over `lookback_trading_days`
+    trading days, expressed as a yield-style number (e.g. 1.23 means +1.23%)."""
+    hist = fetch_yahoo_history(symbol, range_="120d")
+    if not hist or len(hist) < lookback_trading_days + 1:
+        print(
+            f"[pct-change {symbol}] insufficient history "
+            f"({len(hist) if hist else 0} pts, need {lookback_trading_days + 1})",
+            file=sys.stderr,
+        )
+        return None
+    latest_t, latest = hist[-1]
+    _, past = hist[-1 - lookback_trading_days]
+    if past == 0:
+        return None
+    pct = (latest - past) / past * 100
+    # previous = pct change for the prior window (shifted by one day) so
+    # the dashboard's change indicator means "did the % change get
+    # bigger or smaller compared to yesterday's same-window % change".
+    prev_pct = None
+    if len(hist) >= lookback_trading_days + 2:
+        _, prev_latest = hist[-2]
+        _, prev_past = hist[-2 - lookback_trading_days]
+        if prev_past:
+            prev_pct = (prev_latest - prev_past) / prev_past * 100
+    return {
+        "value": pct,
+        "previous": prev_pct,
+        "asof": datetime.fromtimestamp(latest_t, tz=timezone.utc).strftime("%Y-%m-%d"),
+        "source": f"Yahoo ({symbol}, {lookback_trading_days}d % change)",
+    }
+
+
+# -------- India 5Y CDS via worldgovernmentbonds.com --------
+
+def fetch_india_5y_cds() -> dict | None:
+    url = "http://www.worldgovernmentbonds.com/cds-historical-data/india/5-years/"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[wgb cds india] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[wgb cds india] HTTP {status}", file=sys.stderr)
+        return None
+    # The "Current 5Y CDS Value" is highlighted on the page as a number in bps.
+    m = re.search(
+        r'5\s*Years.*?(\d{1,4}(?:\.\d+)?)\s*(?:bps|basis points)',
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if not m:
+        # Less specific fallback: number followed by " bps" anywhere near "India".
+        m = re.search(r'India.*?(\d{1,4}(?:\.\d+)?)\s*bps', html, re.IGNORECASE | re.DOTALL)
+    if not m:
+        print("[wgb cds india] no match", file=sys.stderr)
+        return None
+    try:
+        val = float(m.group(1))
+    except ValueError:
+        return None
+    if not (20.0 <= val <= 2000.0):
+        print(f"[wgb cds india] implausible value {val}, skipping", file=sys.stderr)
+        return None
+    return {
+        "value": val,
+        "previous": None,
+        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "source": "worldgovernmentbonds.com (5Y CDS)",
+    }
+
+
+# -------- NHB refinance rate --------
+
+def fetch_nhb_refinance() -> dict | None:
+    url = "https://nhb.org.in/refinance-scheme/"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[nhb refi] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[nhb refi] HTTP {status}", file=sys.stderr)
+        return None
+    # NHB rates page typically lists something like "Refinance Rate: X.XX%".
+    patterns = [
+        r"refinance\s+rate[^%\d]{0,40}?(\d+\.\d+)\s*%",
+        r"current\s+rate[^%\d]{0,40}?(\d+\.\d+)\s*%",
+    ]
+    for pat in patterns:
+        m = re.search(pat, html, re.IGNORECASE | re.DOTALL)
+        if m:
+            try:
+                val = float(m.group(1))
+            except ValueError:
+                continue
+            if 2.0 <= val <= 15.0:
+                return {
+                    "value": val,
+                    "previous": None,
+                    "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    "source": "nhb.org.in",
+                }
+    print("[nhb refi] no match", file=sys.stderr)
+    return None
+
+
 def fetch_india_10y() -> dict | None:
     """Fetch India 10Y G-Sec yield. Tries investing.com first (HTML, then
     API with pair-id search), then falls back to Indian/free sources."""
@@ -543,6 +671,12 @@ SIGNALS: dict[str, tuple[str, str]] = {
     "nifty":    ("yahoo", "^NSEI"),
     "indiavix": ("yahoo", "^INDIAVIX"),
     "in10y":    ("india10y", ""),
+    # Newly-automated India Credit signals
+    "us_ig_oas":      ("fred",        "BAMLC0A0CM"),
+    "gold_30d_pct":   ("pct_change",  "GC=F:30"),
+    "nifty_wk_pct":   ("pct_change",  "^NSEI:5"),
+    "india_5y_cds":   ("india5ycds",  ""),
+    "nhb_refi_rate":  ("nhb",         ""),
 }
 
 
@@ -555,6 +689,14 @@ def fetch_one(kind: str, target: str) -> dict | None:
         return fetch_stooq(target)
     if kind == "india10y":
         return fetch_india_10y()
+    if kind == "india5ycds":
+        return fetch_india_5y_cds()
+    if kind == "nhb":
+        return fetch_nhb_refinance()
+    if kind == "pct_change":
+        # target is "SYMBOL:N" where N is trading days
+        sym, n = target.rsplit(":", 1)
+        return fetch_pct_change(sym, int(n))
     return None
 
 

@@ -35,11 +35,16 @@ const INDIA_LIVE_VIEW = [
   { key: "brent",             label: "Brent Crude",         prefix: "$" },
   { key: "dxy",               label: "DXY" },
   { key: "us10y",             label: "US 10Y Yield",        suffix: "%" },
+  { key: "us_ig_oas",         label: "US IG OAS",           suffix: " bps" },
   { key: "usdinr",            label: "USD / INR",           suffix: " ₹" },
   { key: "indiavix",          label: "India VIX" },
   { key: "nifty",             label: "Nifty 50" },
+  { key: "nifty_wk_pct",      label: "Nifty 50 Δ (5d)",     suffix: "%" },
   { key: "in10y",             label: "10Y G-Sec Yield",     suffix: "%" },
   { key: "ind_us_10y_spread", label: "India-US 10Y Spread", suffix: "%" },
+  { key: "india_5y_cds",      label: "India 5Y CDS",        suffix: " bps" },
+  { key: "gold_30d_pct",      label: "Gold Δ (30d)",        suffix: "%" },
+  { key: "nhb_refi_rate",     label: "NHB Refinance Rate",  suffix: "%" },
   { key: "mcx_gold_inr_10g",  label: "MCX Gold (₹/10g)",    prefix: "₹" },
 ];
 
