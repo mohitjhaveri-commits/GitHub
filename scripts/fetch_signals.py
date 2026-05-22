@@ -137,12 +137,17 @@ def fetch_stooq(symbol: str) -> dict | None:
     }
 
 
-# India 10Y G-Sec: scrape investing.com (no FRED daily series, no Yahoo
-# ticker, Stooq coverage is patchy). investing.com is bot-protected, so
-# we use a browser-style User-Agent and parse the __NEXT_DATA__ JSON
-# embedded in the page.
+# India 10Y G-Sec: investing.com. Cloudflare-protected, so we try two
+# endpoints in turn:
+#   1. The HTML page, parsing __NEXT_DATA__ or DOM attributes.
+#   2. The historical-data JSON API (pair id 23867 is India 10Y G-Sec).
+# Both attempts log HTTP status and a snippet of the response on failure.
 
 INVESTING_URL = "https://www.investing.com/rates-bonds/india-10-year-bond-yield"
+INVESTING_API_URL = (
+    "https://api.investing.com/api/financialdata/historical/23867"
+    "?start-date={start}&end-date={end}&time-frame=Daily&add-missing-rows=false"
+)
 BROWSER_HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -152,51 +157,72 @@ BROWSER_HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
     "Accept-Encoding": "identity",
     "Cache-Control": "no-cache",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "none",
+    "Sec-Fetch-User": "?1",
+    "Upgrade-Insecure-Requests": "1",
 }
 
 
-def fetch_india_10y() -> dict | None:
-    """Fetch India 10Y G-Sec yield from investing.com."""
+def _fetch_with_status(url: str, headers: dict, timeout: int = 30):
+    """Returns (status_code, body_text) or raises."""
+    req = urllib.request.Request(url, headers=headers)
     try:
-        req = urllib.request.Request(INVESTING_URL, headers=BROWSER_HEADERS)
-        with urllib.request.urlopen(req, timeout=30) as r:
-            html = r.read().decode("utf-8", errors="replace")
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return r.status, r.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as e:
+        body = ""
+        try:
+            body = e.read().decode("utf-8", errors="replace")
+        except Exception:
+            pass
+        return e.code, body
+
+
+def _fetch_india_10y_html() -> dict | None:
+    try:
+        status, html = _fetch_with_status(INVESTING_URL, BROWSER_HEADERS)
     except Exception as e:
-        print(f"[investing india10y] fetch: {e}", file=sys.stderr)
+        print(f"[investing html] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(
+            f"[investing html] HTTP {status}; first 200 chars: {html[:200]!r}",
+            file=sys.stderr,
+        )
+        return None
+    if "Just a moment" in html or "cf-chl" in html or "Attention Required" in html:
+        print("[investing html] Cloudflare interstitial", file=sys.stderr)
         return None
 
     value: float | None = None
     previous: float | None = None
     asof: str | None = None
 
-    # Preferred: parse the __NEXT_DATA__ JSON island.
     m = re.search(
         r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>',
         html,
         re.DOTALL,
     )
     if m:
-        try:
-            blob = m.group(1)
-            # Walk the stringified JSON with regex - the field names vary
-            # by page generation; this is more robust than navigating the
-            # tree.
-            m_last = re.search(r'"last(?:Price)?"\s*:\s*"?([\d,]+\.\d+)"?', blob)
-            if m_last:
+        blob = m.group(1)
+        m_last = re.search(r'"last(?:Price)?"\s*:\s*"?([\d,]+\.\d+)"?', blob)
+        if m_last:
+            try:
                 value = float(m_last.group(1).replace(",", ""))
-            m_prev = re.search(
-                r'"(?:prevClose(?:Price)?|previousClose|prevClosePrice)"\s*:\s*"?([\d,]+\.\d+)"?',
-                blob,
-            )
-            if m_prev:
+            except ValueError:
+                pass
+        m_prev = re.search(
+            r'"(?:prevClose(?:Price)?|previousClose)"\s*:\s*"?([\d,]+\.\d+)"?',
+            blob,
+        )
+        if m_prev:
+            try:
                 previous = float(m_prev.group(1).replace(",", ""))
-            m_date = re.search(r'"(?:lastUpdated|asOfDate|lastTradeTime)"\s*:\s*"([^"]+)"', blob)
-            if m_date:
-                asof = m_date.group(1)[:10]
-        except Exception as e:
-            print(f"[investing india10y] next_data parse: {e}", file=sys.stderr)
+            except ValueError:
+                pass
 
-    # Fallback: try the rendered DOM attributes.
     if value is None:
         m_v = re.search(
             r'data-test="instrument-price-last"[^>]*>\s*([\d,]+\.?\d*)\s*<',
@@ -208,27 +234,87 @@ def fetch_india_10y() -> dict | None:
             except ValueError:
                 pass
 
-    if previous is None:
-        m_p = re.search(
-            r'data-test="prevClose"[^>]*>\s*([\d,]+\.?\d*)\s*<',
-            html,
-        )
-        if m_p:
-            try:
-                previous = float(m_p.group(1).replace(",", ""))
-            except ValueError:
-                pass
-
     if value is None:
-        print("[investing india10y] could not extract yield from page", file=sys.stderr)
+        print(
+            f"[investing html] could not extract; html length={len(html)}; "
+            f"first 300 chars: {html[:300]!r}",
+            file=sys.stderr,
+        )
         return None
 
     return {
         "value": value,
         "previous": previous,
         "asof": asof or datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-        "source": "investing.com",
+        "source": "investing.com (html)",
     }
+
+
+def _fetch_india_10y_api() -> dict | None:
+    from datetime import timedelta
+
+    end = datetime.now(timezone.utc).date()
+    start = end - timedelta(days=14)
+    url = INVESTING_API_URL.format(start=start.isoformat(), end=end.isoformat())
+    headers = {
+        **BROWSER_HEADERS,
+        "Accept": "application/json, text/plain, */*",
+        "Domain-Id": "www",
+        "Referer": INVESTING_URL,
+        "Origin": "https://www.investing.com",
+    }
+    try:
+        status, body = _fetch_with_status(url, headers)
+    except Exception as e:
+        print(f"[investing api] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(
+            f"[investing api] HTTP {status}; first 200 chars: {body[:200]!r}",
+            file=sys.stderr,
+        )
+        return None
+    try:
+        data = json.loads(body)
+    except Exception as e:
+        print(
+            f"[investing api] not JSON: {e}; first 200 chars: {body[:200]!r}",
+            file=sys.stderr,
+        )
+        return None
+    rows = data.get("data") if isinstance(data, dict) else None
+    if not rows:
+        print(f"[investing api] no data rows: {str(data)[:200]!r}", file=sys.stderr)
+        return None
+    rows = sorted(rows, key=lambda r: r.get("rowDateRaw", 0), reverse=True)
+    latest = rows[0]
+    prev = rows[1] if len(rows) > 1 else None
+    try:
+        value = float(latest.get("last_close") or latest.get("price"))
+        previous = (
+            float(prev.get("last_close") or prev.get("price")) if prev else None
+        )
+    except (TypeError, ValueError) as e:
+        print(f"[investing api] parse: {e}; latest={latest}", file=sys.stderr)
+        return None
+    asof = latest.get("rowDate") or datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return {
+        "value": value,
+        "previous": previous,
+        "asof": asof,
+        "source": "investing.com (api)",
+    }
+
+
+def fetch_india_10y() -> dict | None:
+    """Fetch India 10Y G-Sec yield from investing.com (HTML then API)."""
+    for name, fn in (("html", _fetch_india_10y_html), ("api", _fetch_india_10y_api)):
+        result = fn()
+        if result and result.get("value") is not None:
+            print(f"[india_10y] success via {name}: {result['value']}", file=sys.stderr)
+            return result
+    print("[india_10y] all investing.com attempts failed", file=sys.stderr)
+    return None
 
 
 # -------- CoinGecko --------
