@@ -138,6 +138,65 @@ main {
   color: #fca5a5;
 }
 
+.india {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+
+.india-head h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--text);
+}
+
+.india-sub {
+  margin: 4px 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.india-sub code {
+  background: var(--panel-2);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.subgroup { margin-top: 20px; }
+
+.subgroup h3 {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.card .asof {
+  margin-top: auto;
+  padding-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.card .asof.stale { color: #f59e0b; }
+.card .asof .dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--up);
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.card .asof.live .dot { background: #22c55e; box-shadow: 0 0 6px #22c55e88; }
+.card .asof.manual .dot { background: var(--accent); }
+.card .asof.missing .dot { background: var(--muted); }
+
 footer {
   padding: 24px 32px;
   border-top: 1px solid var(--border);

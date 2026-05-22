@@ -241,5 +241,246 @@ async function loadAll() {
   btn.disabled = false;
 }
 
-document.getElementById("refresh").addEventListener("click", loadAll);
-loadAll();
+// ---------- India Credit ----------
+
+const INDIA_LIVE = [
+  { key: "brent",       label: "Brent Crude",        symbol: "cb.f",    prefix: "$" },
+  { key: "dxy",         label: "DXY",                symbol: "^dxy" },
+  { key: "us10y",       label: "US 10Y Yield",       symbol: "10usy.b", suffix: "%" },
+  { key: "usdinr",      label: "USD / INR",          symbol: "usdinr",  suffix: " ₹" },
+  { key: "indiavix",    label: "India VIX",          symbol: "^indiavix" },
+  { key: "nifty",       label: "Nifty 50",           symbol: "^nsei" },
+  { key: "in10y",       label: "10Y G-Sec Yield",    symbol: "10iny.b", suffix: "%" },
+];
+
+const INDIA_LIVE_DERIVED = [
+  {
+    key: "ind_us_spread",
+    label: "India-US 10Y Spread",
+    suffix: " bps",
+    needs: ["in10y", "us10y"],
+    compute: (c) => {
+      const close = (c.in10y.close - c.us10y.close) * 100;
+      const open =
+        c.in10y.open !== null && c.us10y.open !== null
+          ? (c.in10y.open - c.us10y.open) * 100
+          : null;
+      return { close, open };
+    },
+  },
+  {
+    key: "mcx_gold",
+    label: "MCX Gold (₹/10g, est.)",
+    prefix: "₹",
+    needs: ["xauusd", "usdinr"],
+    fetchExtra: { xauusd: "xauusd" },
+    compute: (c) => {
+      // ₹ per 10g ≈ USD/oz × USDINR × 10 / 31.1035
+      const k = 10 / 31.1035;
+      const close = c.xauusd.close * c.usdinr.close * k;
+      const open =
+        c.xauusd.open !== null && c.usdinr.open !== null
+          ? c.xauusd.open * c.usdinr.open * k
+          : null;
+      return { close, open };
+    },
+  },
+];
+
+function cardWithMeta(label) {
+  const el = cardEl(label);
+  const asof = document.createElement("div");
+  asof.className = "asof missing";
+  asof.innerHTML = '<span class="dot"></span><span class="txt">no data</span>';
+  el.appendChild(asof);
+  return el;
+}
+
+function setAsof(el, kind, text) {
+  const asof = el.querySelector(".asof");
+  if (!asof) return;
+  asof.className = `asof ${kind}`;
+  asof.querySelector(".txt").textContent = text;
+}
+
+function daysSince(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return null;
+  return Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+}
+
+function renderManualCard(el, sig) {
+  if (sig.value === null || sig.value === undefined) {
+    renderCard(el, { value: null, absChange: null, pctChange: null });
+    setAsof(el, "missing", "awaiting input");
+    return;
+  }
+  let absChange = null;
+  let pctChange = null;
+  if (sig.previous !== null && sig.previous !== undefined) {
+    absChange = sig.value - sig.previous;
+    pctChange = sig.previous !== 0 ? (absChange / Math.abs(sig.previous)) * 100 : 0;
+    if (sig.invertColor) {
+      // Flip the change sign so a "bad" direction shows red.
+      // We swap by negating change in display: easier to invert via flipping the value used for color via DOM class.
+    }
+  }
+  renderCard(el, {
+    value: sig.value,
+    absChange,
+    pctChange,
+    suffix: sig.unit ? ` ${sig.unit}` : "",
+  });
+  if (sig.invertColor && absChange !== null) {
+    const ch = el.querySelector(".change");
+    // swap up <-> down
+    if (ch.classList.contains("up")) {
+      ch.classList.remove("up");
+      ch.classList.add("down");
+    } else if (ch.classList.contains("down")) {
+      ch.classList.remove("down");
+      ch.classList.add("up");
+    }
+  }
+  const dd = daysSince(sig.asof);
+  const dateLabel = sig.asof ? `as of ${sig.asof}` : "as of —";
+  const stale = dd !== null && dd > 45;
+  setAsof(el, stale ? "manual stale" : "manual", dateLabel);
+}
+
+async function loadIndia() {
+  const root = document.getElementById("india-subgroups");
+  root.innerHTML = "";
+
+  // ----- Live block (Stooq + derived) -----
+  const liveWrap = document.createElement("div");
+  liveWrap.className = "subgroup";
+  liveWrap.innerHTML = '<h3>Live Tape</h3><div class="grid"></div>';
+  const liveGrid = liveWrap.querySelector(".grid");
+  root.appendChild(liveWrap);
+
+  const liveCards = {};
+  for (const sig of INDIA_LIVE) {
+    const el = cardWithMeta(sig.label);
+    liveGrid.appendChild(el);
+    liveCards[sig.key] = { el, sig };
+  }
+  const derivedCards = {};
+  for (const d of INDIA_LIVE_DERIVED) {
+    const el = cardWithMeta(d.label);
+    liveGrid.appendChild(el);
+    derivedCards[d.key] = { el, d };
+  }
+
+  const cache = {};
+  await Promise.all(
+    INDIA_LIVE.map(async (sig) => {
+      try {
+        const res = await fetchStooq(sig.symbol);
+        cache[sig.key] = res;
+        let absChange = null;
+        let pctChange = null;
+        if (res.open !== null && res.open !== 0) {
+          absChange = res.close - res.open;
+          pctChange = (absChange / res.open) * 100;
+        }
+        renderCard(liveCards[sig.key].el, {
+          value: res.close,
+          absChange,
+          pctChange,
+          prefix: sig.prefix || "",
+          suffix: sig.suffix || "",
+        });
+        setAsof(liveCards[sig.key].el, "live", "live · Stooq");
+      } catch (e) {
+        renderError(liveCards[sig.key].el, "Unavailable");
+        setAsof(liveCards[sig.key].el, "missing", "no data");
+      }
+    }),
+  );
+
+  // Extra fetches needed by derived signals (e.g. xauusd).
+  const extras = {};
+  for (const d of INDIA_LIVE_DERIVED) {
+    if (!d.fetchExtra) continue;
+    for (const [k, sym] of Object.entries(d.fetchExtra)) {
+      if (cache[k] || extras[k]) continue;
+      extras[k] = fetchStooq(sym).then((r) => (cache[k] = r)).catch(() => null);
+    }
+  }
+  await Promise.all(Object.values(extras));
+
+  for (const d of INDIA_LIVE_DERIVED) {
+    const { el } = derivedCards[d.key];
+    const ok = d.needs.every((k) => cache[k]);
+    if (!ok) {
+      renderError(el, "Unavailable");
+      setAsof(el, "missing", "no data");
+      continue;
+    }
+    try {
+      const { close, open } = d.compute(cache);
+      let absChange = null;
+      let pctChange = null;
+      if (open !== null && open !== 0) {
+        absChange = close - open;
+        pctChange = (absChange / Math.abs(open)) * 100;
+      }
+      renderCard(el, {
+        value: close,
+        absChange,
+        pctChange,
+        prefix: d.prefix || "",
+        suffix: d.suffix || "",
+      });
+      setAsof(el, "live", "live · derived");
+    } catch (e) {
+      renderError(el, "Unavailable");
+      setAsof(el, "missing", "no data");
+    }
+  }
+
+  // ----- Manual JSON groups -----
+  let manual;
+  try {
+    const res = await fetch("data/india-credit.json", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    manual = await res.json();
+  } catch (e) {
+    const warn = document.createElement("div");
+    warn.className = "subgroup";
+    warn.innerHTML =
+      '<h3>Manual signals</h3><p class="india-sub">Could not load <code>data/india-credit.json</code>.</p>';
+    root.appendChild(warn);
+    return;
+  }
+
+  for (const [groupName, sigs] of Object.entries(manual.groups || {})) {
+    const wrap = document.createElement("div");
+    wrap.className = "subgroup";
+    const grid = document.createElement("div");
+    grid.className = "grid";
+    const h = document.createElement("h3");
+    h.textContent = groupName;
+    wrap.appendChild(h);
+    wrap.appendChild(grid);
+    root.appendChild(wrap);
+
+    for (const sig of sigs) {
+      const el = cardWithMeta(sig.label);
+      grid.appendChild(el);
+      renderManualCard(el, sig);
+    }
+  }
+}
+
+document.getElementById("refresh").addEventListener("click", async () => {
+  await loadAll();
+  await loadIndia();
+});
+
+(async () => {
+  await loadAll();
+  await loadIndia();
+})();
