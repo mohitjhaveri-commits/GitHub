@@ -1,49 +1,50 @@
 # Macro Signals Tracker
 
 A static web dashboard that shows a daily snapshot of macro signals:
-rates &amp; yields, equities &amp; volatility, FX &amp; commodities, and crypto.
+rates &amp; yields, equities &amp; volatility, FX &amp; commodities, crypto, and
+an India Credit panel.
 
-Data is fetched on demand in the browser from free public APIs:
+Data is fetched **server-side** by a Python script
+(`scripts/fetch_signals.py`) running on a GitHub Actions cron every ~6
+hours. Results are written to `data/signals.json` and committed to the
+repo. The browser only reads `data/signals.json` (same-origin) — no
+CORS, no API keys, no proxies.
 
-- [Stooq](https://stooq.com) — indices, yields, FX, commodities (CSV)
-- [CoinGecko](https://www.coingecko.com) — crypto prices
+Sources:
 
-No build step, no API keys. Open `index.html` or serve the folder
-statically.
+- [FRED](https://fred.stlouisfed.org) — US Treasury yields (DGS2/10/30)
+- [Yahoo Finance](https://finance.yahoo.com) — indices, FX, commodities, India indices
+- [Stooq](https://stooq.com) — India 10Y G-Sec yield
+- [CoinGecko](https://www.coingecko.com) — crypto
 
-### CORS note
+## One-time setup
 
-Stooq doesn't send CORS headers, so the dashboard routes Stooq requests
-through a public CORS proxy (`corsproxy.io`, falling back to
-`allorigins.win`). Both are best-effort free services and can be slow or
-unavailable. If many Stooq cards show "Unavailable", the proxies are
-probably the issue — host your own (e.g. a tiny Cloudflare Worker) and
-swap the URLs in `CORS_PROXIES` at the top of `app.js`.
+The workflow needs permission to commit `data/signals.json` back to the
+repo. In repo Settings → Actions → General → **Workflow permissions**,
+select **"Read and write permissions"** and Save.
+
+Then trigger the first run: Actions tab → **Update signals** → **Run
+workflow**. After it succeeds (~30s), `data/signals.json` is populated
+and the dashboard will show data.
 
 ## Run locally
 
 ```sh
+# Refresh data once
+python3 scripts/fetch_signals.py
+
+# Serve the site
 python3 -m http.server 8000
 # then open http://localhost:8000
 ```
 
-## Signals
-
-- **Rates**: US 2Y / 10Y / 30Y Treasury yields, 10Y–2Y spread
-- **Equities**: S&amp;P 500, Nasdaq 100, Dow Jones, VIX
-- **FX &amp; commodities**: DXY, EUR/USD, USD/JPY, gold, WTI, Brent
-- **Crypto**: BTC, ETH, SOL
-
-Each card shows the latest price and the 1-day change. Click **Refresh**
-to re-fetch.
-
 ## Customizing signals
 
-Edit `SIGNALS` in `app.js`. For Stooq-backed signals, set `symbol` to the
-[Stooq ticker](https://stooq.com). For crypto, set `coingecko` to the
-CoinGecko ID.
+- **Live signals** — edit the `SIGNALS` registry at the top of
+  `scripts/fetch_signals.py` (FRED series, Yahoo ticker, or Stooq
+  symbol) and the matching `VIEW` arrays in `app.js`.
+- **India Credit manual signals** — edit `data/india-credit.json`.
+  Each entry has `value`, `previous`, `asof`, and an optional
+  `invertColor` for things like CDS spreads where higher = worse. Cards
+  go yellow ("stale") after 45 days.
 
-## Notes
-
-Quotes from Stooq may be delayed (typically 15+ minutes for US markets,
-end-of-day for some series). Not investment advice.
