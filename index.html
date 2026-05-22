@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Macro Signals Tracker</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="title">
+        <h1>Macro Signals</h1>
+        <p class="sub">Daily snapshot of rates, equities, FX, commodities &amp; crypto</p>
+      </div>
+      <div class="meta">
+        <span id="updated">Loading…</span>
+        <button id="refresh" type="button">Refresh</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="group" data-group="rates">
+        <h2>Rates &amp; Yields</h2>
+        <div class="grid"></div>
+      </section>
+
+      <section class="group" data-group="equities">
+        <h2>Equities &amp; Volatility</h2>
+        <div class="grid"></div>
+      </section>
+
+      <section class="group" data-group="fxcomm">
+        <h2>FX &amp; Commodities</h2>
+        <div class="grid"></div>
+      </section>
+
+      <section class="group" data-group="crypto">
+        <h2>Crypto</h2>
+        <div class="grid"></div>
+      </section>
+
+      <section class="india">
+        <div class="india-head">
+          <h2>India Credit</h2>
+          <p class="india-sub">
+            Live signals from Stooq + manually-maintained values from
+            <code>data/india-credit.json</code> (edit to update).
+          </p>
+        </div>
+        <div id="india-subgroups"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Data: <a href="https://stooq.com" target="_blank" rel="noopener">Stooq</a> ·
+        <a href="https://www.coingecko.com" target="_blank" rel="noopener">CoinGecko</a>.
+        Quotes may be delayed. Not investment advice.
+      </p>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
