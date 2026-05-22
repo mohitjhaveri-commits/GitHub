@@ -379,14 +379,110 @@ def _fetch_india_10y_api() -> dict | None:
     return None
 
 
+def _fetch_india_10y_moneycontrol() -> dict | None:
+    """Scrape moneycontrol.com's India 10Y G-Sec page."""
+    # The standard URL for the 10Y G-Sec quote on moneycontrol.
+    url = "https://www.moneycontrol.com/indian-indices/india-10-year-bond-yield-87.html"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[moneycontrol india10y] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[moneycontrol india10y] HTTP {status}", file=sys.stderr)
+        return None
+    # Moneycontrol renders the current price in a span like:
+    #   <div class="inprice1 nsecp">6.34</div> or <span id="...">6.34</span>
+    # Try a few patterns.
+    patterns = [
+        r'class="inprice1[^"]*"[^>]*>\s*([\d,]+\.\d+)',
+        r'id="bse_quote"[^>]*>\s*([\d,]+\.\d+)',
+        r'"last_price"\s*:\s*"?([\d,]+\.\d+)"?',
+        r'"lastTradedPrice"\s*:\s*"?([\d,]+\.\d+)"?',
+    ]
+    for pat in patterns:
+        m = re.search(pat, html)
+        if m:
+            try:
+                return {
+                    "value": float(m.group(1).replace(",", "")),
+                    "previous": None,
+                    "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    "source": "moneycontrol.com",
+                }
+            except ValueError:
+                continue
+    print(
+        f"[moneycontrol india10y] no match; html length={len(html)}",
+        file=sys.stderr,
+    )
+    return None
+
+
+def _fetch_india_10y_wgb() -> dict | None:
+    """Scrape worldgovernmentbonds.com - more targeted regex than before."""
+    url = "http://www.worldgovernmentbonds.com/country/india/"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[wgb india10y] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[wgb india10y] HTTP {status}", file=sys.stderr)
+        return None
+    # The page has a row whose link text is exactly "India 10 Years" followed
+    # by table cells with yield, change, change%. Target it precisely.
+    m = re.search(
+        r'India\s+10\s*Years.*?<td[^>]*>\s*<[^>]*>\s*([\d.]+)\s*%',
+        html,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if not m:
+        # Alternative: same row but without nested tag
+        m = re.search(
+            r'India\s+10\s*Years[^<]*</a>\s*</td>\s*<td[^>]*>\s*([\d.]+)\s*%',
+            html,
+            re.IGNORECASE | re.DOTALL,
+        )
+    if not m:
+        print("[wgb india10y] could not extract yield", file=sys.stderr)
+        return None
+    try:
+        val = float(m.group(1))
+    except ValueError:
+        return None
+    # Sanity: India 10Y is realistically 4-10% in modern times.
+    if not (3.0 <= val <= 12.0):
+        print(f"[wgb india10y] value {val} outside sanity range; skipping", file=sys.stderr)
+        return None
+    return {
+        "value": val,
+        "previous": None,
+        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+        "source": "worldgovernmentbonds.com",
+    }
+
+
 def fetch_india_10y() -> dict | None:
-    """Fetch India 10Y G-Sec yield from investing.com (HTML then API)."""
-    for name, fn in (("html", _fetch_india_10y_html), ("api", _fetch_india_10y_api)):
+    """Fetch India 10Y G-Sec yield. Tries investing.com first (HTML, then
+    API with pair-id search), then falls back to Indian/free sources."""
+    for name, fn in (
+        ("investing-html", _fetch_india_10y_html),
+        ("investing-api", _fetch_india_10y_api),
+        ("moneycontrol", _fetch_india_10y_moneycontrol),
+        ("wgb", _fetch_india_10y_wgb),
+    ):
         result = fn()
         if result and result.get("value") is not None:
-            print(f"[india_10y] success via {name}: {result['value']}", file=sys.stderr)
-            return result
-    print("[india_10y] all investing.com attempts failed", file=sys.stderr)
+            v = result["value"]
+            if 3.0 <= v <= 12.0:
+                print(f"[india_10y] success via {name}: {v}", file=sys.stderr)
+                return result
+            print(
+                f"[india_10y] {name} returned implausible value {v}; skipping",
+                file=sys.stderr,
+            )
+    print("[india_10y] all sources failed", file=sys.stderr)
     return None
 
 
