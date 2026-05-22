@@ -16,10 +16,10 @@ const CORS_PROXIES = [
 
 const SIGNALS = {
   rates: [
-    { label: "US 10Y Yield", symbol: "10usy.b", suffix: "%" },
-    { label: "US 2Y Yield", symbol: "2usy.b", suffix: "%" },
-    { label: "US 30Y Yield", symbol: "30usy.b", suffix: "%" },
-    { label: "10Y - 2Y Spread", derived: "spread", a: "10usy.b", b: "2usy.b", suffix: "%" },
+    { label: "US 2Y Yield",     treasury: "bc_2year",  suffix: "%" },
+    { label: "US 10Y Yield",    treasury: "bc_10year", suffix: "%" },
+    { label: "US 30Y Yield",    treasury: "bc_30year", suffix: "%" },
+    { label: "10Y - 2Y Spread", treasurySpread: ["bc_10year", "bc_2year"], suffix: "%" },
   ],
   equities: [
     { label: "S&P 500", symbol: "^spx" },
@@ -104,14 +104,42 @@ async function fetchTextWithFallback(url) {
       const res = await fetch(u, { cache: "no-store" });
       if (!res.ok) {
         lastErr = new Error(`HTTP ${res.status}`);
+        console.warn("[fetch]", u, lastErr.message);
         continue;
       }
       return await res.text();
     } catch (e) {
       lastErr = e;
+      console.warn("[fetch]", u, e.message);
     }
   }
   throw lastErr || new Error("All fetches failed");
+}
+
+// US Treasury Fiscal Data API - daily par yield curve. CORS-enabled, no key.
+let _treasuryCache = null;
+async function fetchTreasury() {
+  if (_treasuryCache) return _treasuryCache;
+  const url =
+    "https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/daily_treasury_yield_curve" +
+    "?sort=-record_date&page%5Bsize%5D=2";
+  const res = await fetch(url, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Treasury HTTP ${res.status}`);
+  const data = await res.json();
+  const rows = data.data || [];
+  if (rows.length === 0) throw new Error("Treasury empty");
+  _treasuryCache = {
+    latest: rows[0],
+    prev: rows[1] || null,
+    asof: rows[0].record_date,
+  };
+  return _treasuryCache;
+}
+
+function treasuryPick(row, field) {
+  if (!row) return null;
+  const v = parseFloat(row[field]);
+  return Number.isNaN(v) ? null : v;
 }
 
 async function fetchStooq(symbol) {
@@ -240,16 +268,51 @@ async function loadAll() {
     });
   }
 
-  // Stooq-based groups: rates, equities, fxcomm.
+  // Rates: US Treasury Fiscal Data API (more reliable than Stooq bond yields).
+  _treasuryCache = null;
+  let treasury = null;
+  try {
+    treasury = await fetchTreasury();
+  } catch (e) {
+    console.warn("[treasury]", e.message);
+  }
+  for (const { el, sig } of built.rates) {
+    if (!treasury) {
+      renderError(el, "Unavailable");
+      continue;
+    }
+    let close = null;
+    let open = null;
+    if (sig.treasury) {
+      close = treasuryPick(treasury.latest, sig.treasury);
+      open = treasuryPick(treasury.prev, sig.treasury);
+    } else if (sig.treasurySpread) {
+      const [a, b] = sig.treasurySpread;
+      const closeA = treasuryPick(treasury.latest, a);
+      const closeB = treasuryPick(treasury.latest, b);
+      const openA = treasuryPick(treasury.prev, a);
+      const openB = treasuryPick(treasury.prev, b);
+      if (closeA !== null && closeB !== null) close = closeA - closeB;
+      if (openA !== null && openB !== null) open = openA - openB;
+    }
+    if (close === null) {
+      renderError(el, "Unavailable");
+      continue;
+    }
+    let absChange = null;
+    let pctChange = null;
+    if (open !== null) {
+      absChange = close - open;
+      pctChange = open !== 0 ? (absChange / Math.abs(open)) * 100 : 0;
+    }
+    renderCard(el, { value: close, absChange, pctChange, suffix: sig.suffix || "" });
+  }
+
+  // Stooq-based groups: equities, fxcomm.
   const stooqCache = {};
   const stooqTasks = [];
-  const spreadTasks = [];
-  for (const key of ["rates", "equities", "fxcomm"]) {
+  for (const key of ["equities", "fxcomm"]) {
     for (const { el, sig } of built[key]) {
-      if (sig.derived === "spread") {
-        spreadTasks.push({ el, sig });
-        continue;
-      }
       stooqTasks.push(
         loadStooqSignal(el, sig).then((res) => {
           if (res) stooqCache[sig.symbol] = res;
@@ -258,8 +321,6 @@ async function loadAll() {
     }
   }
   await Promise.all(stooqTasks);
-  // Spreads after their inputs.
-  await Promise.all(spreadTasks.map(({ el, sig }) => loadSpread(el, sig, stooqCache)));
 
   // Crypto: one batched call.
   await loadCrypto(built.crypto);
@@ -401,8 +462,36 @@ async function loadIndia() {
   }
 
   const cache = {};
+
+  // Try Treasury for US 10Y first (more reliable than Stooq bond yields).
+  let treasury = null;
+  try {
+    treasury = await fetchTreasury();
+    const close = treasuryPick(treasury.latest, "bc_10year");
+    const open = treasuryPick(treasury.prev, "bc_10year");
+    if (close !== null) {
+      cache.us10y = { close, open };
+      let absChange = null;
+      let pctChange = null;
+      if (open !== null) {
+        absChange = close - open;
+        pctChange = open !== 0 ? (absChange / Math.abs(open)) * 100 : 0;
+      }
+      renderCard(liveCards.us10y.el, {
+        value: close,
+        absChange,
+        pctChange,
+        suffix: "%",
+      });
+      setAsof(liveCards.us10y.el, "live", `live · Treasury (${treasury.asof})`);
+    }
+  } catch (e) {
+    console.warn("[india treasury]", e.message);
+  }
+
   await Promise.all(
     INDIA_LIVE.map(async (sig) => {
+      if (cache[sig.key]) return; // already populated (e.g. us10y from Treasury)
       try {
         const res = await fetchStooq(sig.symbol);
         cache[sig.key] = res;
@@ -421,6 +510,7 @@ async function loadIndia() {
         });
         setAsof(liveCards[sig.key].el, "live", "live · Stooq");
       } catch (e) {
+        console.warn(`[stooq ${sig.symbol}]`, e.message);
         renderError(liveCards[sig.key].el, "Unavailable");
         setAsof(liveCards[sig.key].el, "missing", "no data");
       }
