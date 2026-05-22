@@ -1,10 +1,18 @@
 // Macro Signals Tracker - on-demand fetch from free public APIs.
 //
 // Sources:
-//   - Stooq (CSV, CORS-enabled) for indices, yields, FX, commodities
-//   - CoinGecko for crypto
+//   - Stooq (CSV) for indices, yields, FX, commodities. Stooq does NOT
+//     send CORS headers, so we route browser requests through a public
+//     CORS proxy. Direct fetch is tried first in case it's ever served
+//     from a same-origin proxy.
+//   - CoinGecko (CORS-enabled) for crypto
 //
 // Each signal renders a card with the latest price and 1-day change.
+
+const CORS_PROXIES = [
+  (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+  (u) => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+];
 
 const SIGNALS = {
   rates: [
@@ -87,16 +95,35 @@ function renderError(el, msg) {
   el.querySelector(".change").textContent = "";
 }
 
+async function fetchTextWithFallback(url) {
+  // Try direct first, then each proxy in turn.
+  const attempts = [url, ...CORS_PROXIES.map((p) => p(url))];
+  let lastErr;
+  for (const u of attempts) {
+    try {
+      const res = await fetch(u, { cache: "no-store" });
+      if (!res.ok) {
+        lastErr = new Error(`HTTP ${res.status}`);
+        continue;
+      }
+      return await res.text();
+    } catch (e) {
+      lastErr = e;
+    }
+  }
+  throw lastErr || new Error("All fetches failed");
+}
+
 async function fetchStooq(symbol) {
   // Returns { close, open } or throws.
   // Stooq CSV: Symbol,Date,Time,Open,High,Low,Close,Volume
   const url = `https://stooq.com/q/l/?s=${encodeURIComponent(symbol)}&f=sd2t2ohlcv&h&e=csv`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const text = await res.text();
+  const text = await fetchTextWithFallback(url);
   const lines = text.trim().split(/\r?\n/);
   if (lines.length < 2) throw new Error("Empty response");
   const cols = lines[1].split(",");
+  // Stooq returns "N/D" for unknown / no-data rows.
+  if (!cols[6] || cols[6] === "N/D") throw new Error("No data");
   const open = parseFloat(cols[3]);
   const close = parseFloat(cols[6]);
   if (Number.isNaN(close)) throw new Error("No data");

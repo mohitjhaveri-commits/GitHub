@@ -11,6 +11,15 @@ Data is fetched on demand in the browser from free public APIs:
 No build step, no API keys. Open `index.html` or serve the folder
 statically.
 
+### CORS note
+
+Stooq doesn't send CORS headers, so the dashboard routes Stooq requests
+through a public CORS proxy (`corsproxy.io`, falling back to
+`allorigins.win`). Both are best-effort free services and can be slow or
+unavailable. If many Stooq cards show "Unavailable", the proxies are
+probably the issue — host your own (e.g. a tiny Cloudflare Worker) and
+swap the URLs in `CORS_PROXIES` at the top of `app.js`.
+
 ## Run locally
 
 ```sh
