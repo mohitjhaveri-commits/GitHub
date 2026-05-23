@@ -747,6 +747,40 @@ def _fetch_india_10y_et() -> dict | None:
     if status != 200:
         print(f"[et india10y] HTTP {status}", file=sys.stderr)
         return None
+
+    # ET's /markets/bonds page lists Indian sovereign yields up front.
+    # The text "India 10 Year" isn't present verbatim, but the India
+    # 10Y G-Sec is reliably the SMALLEST value in the 6.0-7.5% band
+    # among the first numbers on the page (the curve slopes up, so
+    # longer tenors and corporate bonds sit above it). 8.25 = RBI
+    # bank rate, 7.0+ = 30Y / 14Y, 6.4-6.5 = the 10Y benchmark.
+    nums = re.findall(r"\b(\d+\.\d{2,4})\b", html[:200000])
+    plausible: list[float] = []
+    for n in nums:
+        try:
+            v = float(n)
+        except ValueError:
+            continue
+        if 6.0 <= v <= 7.5:
+            plausible.append(v)
+        if len(plausible) >= 20:
+            break
+
+    if plausible:
+        val = min(plausible[:10])
+        if 6.0 <= val <= 7.5:
+            print(
+                f"[et india10y] picked min of first {min(10, len(plausible))} "
+                f"plausibles {plausible[:10]} -> {val}",
+                file=sys.stderr,
+            )
+            return {
+                "value": val,
+                "previous": None,
+                "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                "source": "economictimes.indiatimes.com (min plausible)",
+            }
+
     return _extract_india_10y_from_html(html, "economictimes.indiatimes.com")
 
 
