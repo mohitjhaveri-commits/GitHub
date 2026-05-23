@@ -634,24 +634,92 @@ def fetch_rbi_3m_tbill() -> dict | None:
     return None
 
 
+def _extract_india_10y_from_html(html: str, source_label: str) -> dict | None:
+    """Generic India 10Y G-Sec yield extractor:
+      1. Anchor on the text 'India 10 Year' (or '10 Year G-Sec'), then
+         take the FIRST 5.0-9.0 number that appears within ~500 chars
+         after the anchor.
+      2. Fall back to a list of common quote-page price patterns.
+      3. Debug-dump the first few plausible 5-9% numbers found anywhere
+         on the page so we can iterate if no match.
+    """
+    # 1. Anchored search
+    anchors = [
+        r"India\s*10\s*[-\s]*Year",
+        r"10\s*Year\s*G\s*-\s*Sec",
+        r"10\s*Yr\s*G\s*Sec",
+        r"India\s*10Y",
+    ]
+    for anchor_pat in anchors:
+        for m in re.finditer(anchor_pat, html, re.IGNORECASE):
+            window = html[m.end() : m.end() + 1000]
+            nm = re.search(r"\b([5-8]\.\d{2,4})\b", window)
+            if nm:
+                try:
+                    val = float(nm.group(1))
+                except ValueError:
+                    continue
+                if 5.0 <= val <= 9.0:
+                    return {
+                        "value": val,
+                        "previous": None,
+                        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                        "source": source_label,
+                    }
+
+    # 2. Pattern fallback
+    patterns = [
+        r'class="inprice1[^"]*"[^>]*>\s*([\d,]+\.\d+)',
+        r'id="b_(?:bse|nse)_quote"[^>]*>\s*([\d,]+\.\d+)',
+        r'"last_price"\s*:\s*"?([\d,]+\.\d+)"?',
+        r'"lastTradedPrice"\s*:\s*"?([\d,]+\.\d+)"?',
+        r'data-(?:last|price)[^=]*="([\d,]+\.\d+)"',
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, html, re.IGNORECASE):
+            try:
+                val = float(m.group(1).replace(",", ""))
+            except ValueError:
+                continue
+            if 5.0 <= val <= 9.0:
+                return {
+                    "value": val,
+                    "previous": None,
+                    "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    "source": source_label,
+                }
+
+    # 3. Debug dump - shows what plausible numbers exist near "India 10"
+    debug_hits: list[str] = []
+    for anchor_pat in anchors:
+        for m in re.finditer(anchor_pat, html, re.IGNORECASE):
+            window = html[max(0, m.start() - 80) : m.end() + 300]
+            nums = re.findall(r"\b\d+\.\d+\b", window)
+            if nums:
+                debug_hits.append(f"near '{m.group(0)}': {nums[:8]}")
+        if debug_hits:
+            break
+    if debug_hits:
+        print(
+            f"[{source_label}] no anchored 5-9% match; debug hits: {debug_hits[:5]}",
+            file=sys.stderr,
+        )
+    else:
+        all_plausible = re.findall(r"\b([5-8]\.\d{2,4})\b", html)
+        print(
+            f"[{source_label}] no 'India 10 Year' anchor found; first 8 plausible "
+            f"5-8.x numbers on page: {all_plausible[:8]}",
+            file=sys.stderr,
+        )
+    return None
+
+
 def _fetch_india_10y_moneycontrol() -> dict | None:
-    """Scrape moneycontrol.com - tries the dedicated quote page and the
-    bond-yields markets page."""
     urls = [
         "https://www.moneycontrol.com/indian-indices/india-10-year-bond-yield-87.html",
         "https://www.moneycontrol.com/markets/bond-yields/",
         "https://www.moneycontrol.com/news/business/markets/bond-yields-india",
         "https://www.moneycontrol.com/markets/global-indices/",
-    ]
-    patterns = [
-        # Common moneycontrol price patterns
-        r'class="inprice1[^"]*"[^>]*>\s*([\d,]+\.\d+)',
-        r'id="b_(?:bse|nse)_quote"[^>]*>\s*([\d,]+\.\d+)',
-        r'"last_price"\s*:\s*"?([\d,]+\.\d+)"?',
-        r'"lastTradedPrice"\s*:\s*"?([\d,]+\.\d+)"?',
-        # Anchored to "India 10 Year"
-        r"India\s*10[\s\-]*Year[^%\d<]{0,80}?([\d.]+)\s*%",
-        r"India\s*10[\s\-]*Year[^<]*</[^>]+>\s*<[^>]*>\s*([\d.]+)",
     ]
     for url in urls:
         try:
@@ -662,26 +730,14 @@ def _fetch_india_10y_moneycontrol() -> dict | None:
         if status != 200:
             print(f"[moneycontrol {url}] HTTP {status}", file=sys.stderr)
             continue
-        for pat in patterns:
-            for m in re.finditer(pat, html, re.IGNORECASE | re.DOTALL):
-                try:
-                    val = float(m.group(1).replace(",", ""))
-                except ValueError:
-                    continue
-                # Tight India 10Y G-Sec sanity range
-                if 5.0 <= val <= 9.0:
-                    return {
-                        "value": val,
-                        "previous": None,
-                        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                        "source": f"moneycontrol.com ({url.rsplit('/', 1)[-1] or 'home'})",
-                    }
-        print(f"[moneycontrol {url}] no plausible 5-9% match", file=sys.stderr)
+        label = f"moneycontrol {url.rsplit('/', 1)[-1] or 'home'}"
+        result = _extract_india_10y_from_html(html, label)
+        if result:
+            return result
     return None
 
 
 def _fetch_india_10y_et() -> dict | None:
-    """Scrape economictimes.indiatimes.com bonds page."""
     url = "https://economictimes.indiatimes.com/markets/bonds"
     try:
         status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
@@ -691,26 +747,7 @@ def _fetch_india_10y_et() -> dict | None:
     if status != 200:
         print(f"[et india10y] HTTP {status}", file=sys.stderr)
         return None
-    patterns = [
-        r"India\s*10[\s\-]*Year[^<]*</[^>]+>\s*<[^>]*>\s*([\d.]+)",
-        r"10\s*Year\s*GOI[^%\d]{0,80}?([\d.]+)\s*%",
-        r"India\s*10Y[^%\d]{0,80}?([\d.]+)\s*%",
-    ]
-    for pat in patterns:
-        for m in re.finditer(pat, html, re.IGNORECASE | re.DOTALL):
-            try:
-                val = float(m.group(1))
-            except ValueError:
-                continue
-            if 5.0 <= val <= 9.0:
-                return {
-                    "value": val,
-                    "previous": None,
-                    "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                    "source": "economictimes.indiatimes.com",
-                }
-    print("[et india10y] no plausible 5-9% match", file=sys.stderr)
-    return None
+    return _extract_india_10y_from_html(html, "economictimes.indiatimes.com")
 
 
 def fetch_india_10y() -> dict | None:
