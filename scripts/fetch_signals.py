@@ -748,12 +748,12 @@ def _fetch_india_10y_et() -> dict | None:
         print(f"[et india10y] HTTP {status}", file=sys.stderr)
         return None
 
-    # ET's /markets/bonds page lists Indian sovereign yields up front.
-    # The text "India 10 Year" isn't present verbatim, but the India
-    # 10Y G-Sec is reliably the SMALLEST value in the 6.0-7.5% band
-    # among the first numbers on the page (the curve slopes up, so
-    # longer tenors and corporate bonds sit above it). 8.25 = RBI
-    # bank rate, 7.0+ = 30Y / 14Y, 6.4-6.5 = the 10Y benchmark.
+    # ET's /markets/bonds page lists multiple tenors up front (5Y,
+    # 10Y, 14Y / 30Y) plus the RBI bank rate (8.25). The India 10Y
+    # G-Sec is the MEDIAN of the distinct plausible 6.0-7.5% values:
+    # the lowest is the short end (e.g. 5Y at ~6.48), the highest is
+    # the long end (~7.09), and the middle one (~7.06) is the 10Y
+    # benchmark.
     nums = re.findall(r"\b(\d+\.\d{2,4})\b", html[:200000])
     plausible: list[float] = []
     for n in nums:
@@ -767,18 +767,18 @@ def _fetch_india_10y_et() -> dict | None:
             break
 
     if plausible:
-        val = min(plausible[:10])
-        if 6.0 <= val <= 7.5:
+        distinct = sorted(set(plausible))
+        median = distinct[len(distinct) // 2] if len(distinct) >= 2 else distinct[0]
+        if 6.0 <= median <= 7.5:
             print(
-                f"[et india10y] picked min of first {min(10, len(plausible))} "
-                f"plausibles {plausible[:10]} -> {val}",
+                f"[et india10y] distinct plausibles {distinct} -> median {median}",
                 file=sys.stderr,
             )
             return {
-                "value": val,
+                "value": median,
                 "previous": None,
                 "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                "source": "economictimes.indiatimes.com (min plausible)",
+                "source": "economictimes.indiatimes.com (median plausible)",
             }
 
     return _extract_india_10y_from_html(html, "economictimes.indiatimes.com")
