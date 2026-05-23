@@ -214,18 +214,17 @@ function renderIndia(data, manual) {
   const root = document.getElementById("india-subgroups");
   root.innerHTML = "";
 
-  // Live Tape (always shown; signals.json may have nulls for individual cards)
+  // Live Tape - always renders all cards; cards with no data show
+  // "Unavailable" so you can tell which slot is empty.
   const liveWrap = document.createElement("div");
   liveWrap.className = "subgroup";
   liveWrap.innerHTML = '<h3>Live Tape</h3><div class="grid"></div>';
   const liveGrid = liveWrap.querySelector(".grid");
   root.appendChild(liveWrap);
   for (const view of INDIA_LIVE_VIEW) {
-    const sig = data.signals[view.key];
-    if (!sig || sig.value === null || sig.value === undefined) continue;
     const el = cardEl(view.label, true);
     liveGrid.appendChild(el);
-    renderCard(el, view, sig);
+    renderCard(el, view, data.signals[view.key]);
   }
 
   if (!manual) return;
