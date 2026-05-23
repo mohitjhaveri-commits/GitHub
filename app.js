@@ -292,6 +292,331 @@ function caPctChange(data, key) {
   return ((s.value - s.previous) / s.previous) * 100;
 }
 
+// ---------- Regime detection ----------
+
+function caDetectRegime(V) {
+  // Stress: extreme conditions across multiple factors at once
+  if (
+    V.brent != null && V.brent > 130 &&
+    V.dxy != null && V.dxy > 108 &&
+    V.indiavix != null && V.indiavix > 28 &&
+    V.usdinrPct != null && V.usdinrPct > 3
+  ) {
+    return {
+      id: "stress",
+      label: "Stress / Risk-Off",
+      text:
+        "Credit markets under stress. Secondary market liquidity for A/AA NCDs will dry up. Bid-ask spreads will widen to 50–100 bps. Halt new purchases. Focus on portfolio defence — review PONV triggers (ESAF SFB), covenant breach proximity (Kaabil Finance gearing near 5x ICRA trigger), and maturity concentration. If holding unsecured MFI paper, evaluate exit even at mark-to-market loss. SDL and AAA PSU bonds are the only safe carry in this regime.",
+    };
+  }
+
+  // Defensive: any one of these is enough
+  if (
+    (V.brent != null && V.brent > 110) ||
+    (V.dxy != null && V.dxy > 105) ||
+    (V.indiavix != null && V.indiavix > 22) ||
+    (V.nifty != null && V.nifty < 20000)
+  ) {
+    return {
+      id: "defensive",
+      label: "Defensive / Spread Widening",
+      text:
+        "Risk factors elevated. Corporate bond spreads likely to widen 25–50 bps over the next 1–2 months. Reduce A-rated NBFC exposure, move up in quality to AA/AAA. Shorten duration to <2Y. Avoid MFI-linked issuers (CreditAccess, Asirvad) where asset quality stress is likely to surface first. Gold loan NBFCs remain relatively defensive but monitor LTV levels if gold corrects. Build cash for better entry points.",
+    };
+  }
+
+  // Risk-on: all factors aligned
+  if (
+    V.brent != null && V.brent < 90 &&
+    V.dxy != null && V.dxy < 100 &&
+    V.indiavix != null && V.indiavix < 15 &&
+    V.nifty != null && V.nifty > 23000 &&
+    V.in10y != null && V.in10y < 7
+  ) {
+    return {
+      id: "risk-on",
+      label: "Risk-On / Spread Compression",
+      text:
+        "All macro factors aligned for credit. NCD spreads should tighten 15–25 bps over the next quarter. This is the environment to extend duration to 3–4Y, add A-rated paper, and participate in primary NCD issuances at current coupons. Gold-loan NBFCs (Muthoot, Indel, Kosamattam) are particularly well-positioned — benign gold prices provide LTV cushion while rate cuts lower their borrowing cost. Consider locking in high-coupon NCDs before the next repricing wave.",
+    };
+  }
+
+  return {
+    id: "neutral",
+    label: "Carry-Friendly / Neutral",
+    text:
+      "Mixed signals — no clear directional trade. Focus on carry rather than capital gains. Stick to 1.5–2.5Y duration in AA-rated secured NCDs. Avoid reaching for yield in unsecured MFI paper. The rate cycle is supportive but global risks (crude, DXY, geopolitics) limit further spread compression. Book profits on any A-rated positions that have tightened >50 bps from entry. Reinvest in shorter-duration AA paper.",
+  };
+}
+
+// ---------- Cross-asset signal matrix ----------
+
+function caClassifyAndComment(key, V) {
+  // Returns {value, level, commentary, dir}
+  switch (key) {
+    case "brent": {
+      const v = V.brent;
+      if (v == null) return null;
+      let level, commentary, dir;
+      if (v > 110) {
+        level = "red";
+        commentary =
+          "Pushes India CAD wider → INR pressure → RBI forced to pause/hike → NBFC funding costs rise → NCD spreads widen. Gold-loan NBFCs partially hedged via gold collateral. Unsecured lenders (consumer/MFI) most exposed.";
+        dir = "down";
+      } else if (v < 85) {
+        level = "green";
+        commentary =
+          "Supports INR, keeps inflation anchored, gives RBI room for 25–50 bps more cuts. Directly compresses NBFC borrowing costs by 15–30 bps. Most bullish single factor for performing credit.";
+        dir = "up";
+      } else {
+        level = "amber";
+        commentary =
+          "Crude in normal band — macro-neutral for INR and funding costs. Watch for breakouts in either direction.";
+        dir = "flat";
+      }
+      return { value: `$${v.toFixed(2)}`, level, commentary, dir };
+    }
+    case "dxy": {
+      const v = V.dxy;
+      if (v == null) return null;
+      let level, commentary, dir;
+      if (v > 103) {
+        level = "red";
+        commentary =
+          "Strong dollar = FPI outflows from Indian debt → reduced demand for corporate bonds → wider spreads. Also signals global liquidity tightening which historically precedes EM credit events.";
+        dir = "down";
+      } else if (v < 100) {
+        level = "green";
+        commentary =
+          "Weak dollar = EM tailwind. FPI flows into Indian bonds (post JP Morgan index inclusion, India now ~10% weight in GBI-EM). Demand for AAA/AA paper increases, pulling A-rated spreads tighter via the compression cascade.";
+        dir = "up";
+      } else {
+        level = "amber";
+        commentary =
+          "Dollar in neutral band. FPI flows two-way; spread compression hinges on domestic catalysts.";
+        dir = "flat";
+      }
+      return { value: v.toFixed(2), level, commentary, dir };
+    }
+    case "usdinr": {
+      const v = V.usdinr;
+      const pct = V.usdinrPct;
+      if (v == null) return null;
+      const pctStr = pct == null ? "—" : `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`;
+      let level, dir;
+      if (pct != null && pct > 3) { level = "red"; dir = "down"; }
+      else if (pct != null && pct > 1) { level = "amber"; dir = "flat"; }
+      else { level = "green"; dir = "up"; }
+      const commentary =
+        `Every 1% INR depreciation adds ~10 bps to NBFC foreign-currency borrowing costs. Current spot ₹${v.toFixed(2)}/$ (Δ ${pctStr} vs prior). For NBFCs with ECB exposure (Shriram, Bajaj Finance), FX hedging costs eat into NIMs. Pure-domestic NBFCs (Muthoot, Indel, Paisalo) are insulated.`;
+      return { value: `₹${v.toFixed(2)}`, level, commentary, dir };
+    }
+    case "indiavix": {
+      const v = V.indiavix;
+      if (v == null) return null;
+      let level, commentary, dir;
+      if (v < 15) {
+        level = "green";
+        commentary =
+          "Low VIX = tight credit spreads. NCD primary issuances will be well-subscribed. Secondary market bid-ask spreads narrow to 10–20 bps for AA paper. Good window for portfolio rebalancing.";
+        dir = "up";
+      } else if (v <= 22) {
+        level = "amber";
+        commentary =
+          "Normal range. Credit markets function but without urgency. Primary issuance may see 1.2–1.5x subscription vs 2x+ in low-VIX environments.";
+        dir = "flat";
+      } else {
+        level = "red";
+        commentary =
+          "Elevated — mutual funds start gating, insurance companies pull back from corporate bonds, secondary liquidity evaporates for A-rated paper. Only AA and above trade in reasonable clip size.";
+        dir = "down";
+      }
+      return { value: v.toFixed(2), level, commentary, dir };
+    }
+    case "vix": {
+      const v = V.vix;
+      if (v == null) return null;
+      let level, dir;
+      if (v > 25) { level = "red"; dir = "down"; }
+      else if (v > 18) { level = "amber"; dir = "flat"; }
+      else { level = "green"; dir = "up"; }
+      const commentary =
+        "Global risk-appetite proxy. When US VIX > 25, FPI outflows from Indian credit markets accelerate. Correlation between US VIX and Indian corporate-bond spread widening is ~0.6 with a 1–2 week lag.";
+      return { value: v.toFixed(2), level, commentary, dir };
+    }
+    case "in10y": {
+      const v = V.in10y;
+      if (v == null) return null;
+      let level, dir;
+      if (v < 6.8) { level = "green"; dir = "up"; }
+      else if (v <= 7.5) { level = "amber"; dir = "flat"; }
+      else { level = "red"; dir = "down"; }
+      const aa = (v + 2).toFixed(2);
+      const a = (v + 3.5).toFixed(2);
+      const commentary =
+        `The anchor for all corporate bond pricing. A-rated NBFC NCDs trade ~300–400 bps over G-Sec; if G-Sec drops 25 bps, NCD yields follow with a 50–70% pass-through within 2–3 weeks. At ${v.toFixed(2)}% on the 10Y, AA 3Y NCDs price ~${aa}% and A-rated ~${a}%.`;
+      return { value: `${v.toFixed(2)}%`, level, commentary, dir };
+    }
+    case "us10y": {
+      const v = V.us10y;
+      if (v == null) return null;
+      let level, dir;
+      if (v < 4.2) { level = "green"; dir = "up"; }
+      else if (v <= 4.8) { level = "amber"; dir = "flat"; }
+      else { level = "red"; dir = "down"; }
+      const spread = V.ind_us_spread != null ? `${V.ind_us_spread.toFixed(2)}%` : "—";
+      const commentary =
+        `Global rate anchor. India-US 10Y spread currently ${spread}. Historically, when this spread exceeds 5.5%, India bonds attract carry-trade flows. Below 4%, FPIs prefer US Treasuries over Indian credit risk.`;
+      return { value: `${v.toFixed(2)}%`, level, commentary, dir };
+    }
+    case "xauusd": {
+      const v = V.xauusd;
+      if (v == null) return null;
+      const trigger = (v * 0.75).toFixed(0);
+      const change = V.gold_30d;
+      let level, dir;
+      if (change != null && change < -10) { level = "red"; dir = "down"; }
+      else if (change != null && Math.abs(change) > 5) { level = "amber"; dir = "flat"; }
+      else { level = "green"; dir = "up"; }
+      const commentary =
+        `Gold directly determines asset quality for gold-loan NBFCs (Muthoot Fincorp, Indel Money, Kosamattam, ESAF). LTV averages 65–70%; a 20%+ drop from current would trigger mandatory margin calls and auctions. Current gold $${v.toFixed(0)} implies an auction-trigger zone below ~$${trigger}. LTV cushion is comfortable at current levels.`;
+      return { value: `$${v.toFixed(0)}`, level, commentary, dir };
+    }
+    case "mcx_gold_inr_10g": {
+      const v = V.mcxGold;
+      if (v == null) return null;
+      let level, dir, healthLabel;
+      if (v > 60000) { level = "green"; dir = "up"; healthLabel = "healthy"; }
+      else if (v >= 50000) { level = "amber"; dir = "flat"; healthLabel = "watch"; }
+      else { level = "red"; dir = "down"; healthLabel = "stressed"; }
+      const commentary =
+        `The INR gold price is what actually matters for Indian gold-loan underwriting — even if XAU/USD falls, INR depreciation cushions the domestic price. At ₹${v.toLocaleString("en-IN", { maximumFractionDigits: 0 })}/10g, gold-loan NBFC portfolio quality is ${healthLabel}.`;
+      return { value: `₹${v.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`, level, commentary, dir };
+    }
+    case "nifty": {
+      const v = V.nifty;
+      if (v == null) return null;
+      let level, dir;
+      if (v > 23000) { level = "green"; dir = "up"; }
+      else if (v >= 20000) { level = "amber"; dir = "flat"; }
+      else { level = "red"; dir = "down"; }
+      const commentary =
+        "Equity market strength supports NBFC equity raises and the IPO pipeline. Six MeraDhan issuers have upcoming IPOs (InCred, Fibe, Muthoot Fincorp, Navi, KreditBee, Indel Money). Post-IPO yield compression averages 30–80 bps for A-rated issuers. A strong Nifty raises IPO probability and accelerates the yield-compression trade.";
+      return { value: v.toLocaleString(undefined, { maximumFractionDigits: 0 }), level, commentary, dir };
+    }
+    case "nifty_wk_pct": {
+      const v = V.nifty_wk;
+      if (v == null) return null;
+      let level, dir;
+      if (v > 0) { level = "green"; dir = "up"; }
+      else if (v >= -2) { level = "amber"; dir = "flat"; }
+      else { level = "red"; dir = "down"; }
+      const commentary =
+        "Short-term equity momentum. A >2% weekly drop historically correlates with 10–15 bps widening in AA NCD spreads within the following week, as mutual fund redemptions force selling across asset classes.";
+      return { value: `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`, level, commentary, dir };
+    }
+    case "ind_us_10y_spread": {
+      const v = V.ind_us_spread;
+      if (v == null) return null;
+      let level, dir;
+      if (v >= 4.5 && v <= 6) { level = "green"; dir = "up"; }
+      else if ((v >= 3.5 && v < 4.5) || (v > 6 && v <= 6.5)) { level = "amber"; dir = "flat"; }
+      else { level = "red"; dir = "down"; }
+      const cmp = v > 5.2 ? "above" : v < 5.2 ? "below" : "at";
+      const demand = v > 5.5 ? "Wide spread = foreign demand for Indian duration." : v < 4 ? "Narrow spread = domestic-only bid, slower spread compression." : "Spread in neutral band — flows are two-way.";
+      const commentary =
+        `The carry-trade signal. At ${v.toFixed(2)}%, this is ${cmp} the 5-year average of ~5.2%. ${demand}`;
+      return { value: `${v.toFixed(2)}%`, level, commentary, dir };
+    }
+  }
+  return null;
+}
+
+const CA_SIGNAL_KEYS = [
+  ["Brent Crude", "brent"],
+  ["DXY", "dxy"],
+  ["USD/INR", "usdinr"],
+  ["India VIX", "indiavix"],
+  ["US VIX", "vix"],
+  ["India 10Y G-Sec", "in10y"],
+  ["US 10Y Treasury", "us10y"],
+  ["Gold (XAU/USD)", "xauusd"],
+  ["MCX Gold (₹/10g)", "mcx_gold_inr_10g"],
+  ["Nifty 50", "nifty"],
+  ["Nifty 5D Δ", "nifty_wk_pct"],
+  ["India-US 10Y Spread", "ind_us_10y_spread"],
+];
+
+function renderSignalMatrix(V) {
+  const body = document.getElementById("ca-signal-body");
+  body.innerHTML = "";
+  for (const [label, key] of CA_SIGNAL_KEYS) {
+    const r = caClassifyAndComment(key, V);
+    const tr = document.createElement("tr");
+    if (r) tr.className = `lvl-${r.level}`;
+    if (!r) {
+      tr.innerHTML = `
+        <td class="ca-name">${label}</td>
+        <td class="ca-num">—</td>
+        <td><span class="ca-level-badge lvl-amber">N/A</span></td>
+        <td class="ca-commentary">Data unavailable.</td>
+        <td class="ca-impact flat">→</td>
+      `;
+    } else {
+      const arrow = r.dir === "up" ? "↑" : r.dir === "down" ? "↓" : "→";
+      const dirCls = r.dir === "up" ? "up" : r.dir === "down" ? "down" : "flat";
+      const lvlText = r.level === "green" ? "Supportive" : r.level === "red" ? "Stressed" : "Neutral";
+      tr.innerHTML = `
+        <td class="ca-name">${label}</td>
+        <td class="ca-num">${r.value}</td>
+        <td><span class="ca-level-badge lvl-${r.level}">${lvlText}</span></td>
+        <td class="ca-commentary">${r.commentary}</td>
+        <td class="ca-impact ${dirCls}">${arrow}</td>
+      `;
+    }
+    body.appendChild(tr);
+  }
+}
+
+// ---------- NBFC funding cost waterfall ----------
+
+function renderWaterfall() {
+  const root = document.getElementById("ca-waterfall");
+  root.innerHTML = "";
+  const rows = [
+    { type: "anchor", label: "RBI Repo Rate", value: "5.25%" },
+    { type: "head", label: "Funding sources" },
+    { type: "add", label: "Bank lending spread to NBFCs (~150–200 bps)", value: "→ 6.75–7.25%" },
+    { type: "add", label: "NCD primary issuance, AA (~200–250 bps over repo)", value: "→ 7.25–7.75%" },
+    { type: "add", label: "NCD primary issuance, A (~300–400 bps over repo)", value: "→ 8.25–9.25%" },
+    { type: "add", label: "CP, 90-day AA (~75–100 bps over repo)", value: "→ 6.00–6.25%" },
+    { type: "total", label: "Blended NBFC borrowing cost (AA)", value: "~7.0–7.5%" },
+    { type: "total", label: "Blended NBFC borrowing cost (A)", value: "~8.0–9.0%" },
+    { type: "head", label: "Lending rates & NIM" },
+    { type: "lend", label: "Gold loan lending rate", value: "12–18%   |   NIM 4–8%" },
+    { type: "lend", label: "MFI lending rate", value: "20–24%   |   NIM 12–16%" },
+    { type: "lend", label: "Consumer lending rate", value: "16–28%   |   NIM 8–18%" },
+  ];
+  for (const r of rows) {
+    if (r.type === "head") {
+      const h = document.createElement("div");
+      h.className = "ca-wf-section-head";
+      h.textContent = r.label;
+      root.appendChild(h);
+      continue;
+    }
+    const div = document.createElement("div");
+    div.className = `ca-wf-row ca-wf-${r.type}`;
+    div.innerHTML = `
+      <span class="ca-wf-arrow">${r.type === "add" || r.type === "lend" ? "+" : "•"}</span>
+      <span class="ca-wf-label">${r.label}</span>
+      <span class="ca-wf-value">${r.value}</span>
+    `;
+    root.appendChild(div);
+  }
+}
+
+// (legacy helper retained for backward compat)
 function buildCreditOutlook(V) {
   const parts = [];
   let supportive = 0;
@@ -554,16 +879,19 @@ function renderRiskMatrix(V) {
   `;
 }
 
-const CA_RBI_RATES = [
-  { date: "2023-02", rate: 6.5 },
-  { date: "2024-06", rate: 6.5 },
-  { date: "2024-10", rate: 6.5 },
-  { date: "2025-02", rate: 6.25 },
-  { date: "2025-04", rate: 6.0 },
-  { date: "2025-06", rate: 5.75 },
-  { date: "2025-08", rate: 5.5 },
-  { date: "2025-12", rate: 5.25 },
-  { date: "2026-02", rate: 5.25 },
+const CA_RATE_CYCLE = [
+  { date: "2023-02", repo: 6.50, cpi: 6.52 },
+  { date: "2023-06", repo: 6.50, cpi: 4.81 },
+  { date: "2023-12", repo: 6.50, cpi: 5.69 },
+  { date: "2024-06", repo: 6.50, cpi: 5.08 },
+  { date: "2024-12", repo: 6.50, cpi: 5.22 },
+  { date: "2025-02", repo: 6.25, cpi: 4.31 },
+  { date: "2025-04", repo: 6.00, cpi: 3.16 },
+  { date: "2025-06", repo: 5.75, cpi: 3.54 },
+  { date: "2025-08", repo: 5.50, cpi: 3.65 },
+  { date: "2025-12", repo: 5.25, cpi: 3.40 },
+  { date: "2026-02", repo: 5.25, cpi: 3.21 },
+  { date: "2026-04", repo: 5.25, cpi: 3.48 },
 ];
 
 let _caRateChart = null;
@@ -573,8 +901,9 @@ function renderRateCycleChart() {
   if (typeof Chart === "undefined") return;
   const ctx = document.getElementById("ca-rate-chart");
   if (!ctx) return;
-  const labels = CA_RBI_RATES.map((p) => p.date);
-  const rates = CA_RBI_RATES.map((p) => p.rate);
+  const labels = CA_RATE_CYCLE.map((p) => p.date);
+  const repo = CA_RATE_CYCLE.map((p) => p.repo);
+  const cpi = CA_RATE_CYCLE.map((p) => p.cpi);
   if (_caRateChart) _caRateChart.destroy();
   _caRateChart = new Chart(ctx, {
     type: "line",
@@ -583,28 +912,75 @@ function renderRateCycleChart() {
       datasets: [
         {
           label: "RBI Repo Rate",
-          data: rates,
+          data: repo,
           borderColor: "#fbbf24",
-          backgroundColor: "rgba(251, 191, 36, 0.10)",
+          backgroundColor: "rgba(251, 191, 36, 0.12)",
           fill: true,
           tension: 0.1,
           pointBackgroundColor: "#fbbf24",
           pointBorderColor: "#0b0d12",
           pointBorderWidth: 2,
-          pointRadius: 5,
+          pointRadius: 4,
           pointHoverRadius: 7,
           borderWidth: 2.5,
+          yAxisID: "y",
+        },
+        {
+          label: "CPI YoY",
+          data: cpi,
+          borderColor: "#e6e9ef",
+          backgroundColor: "rgba(230, 233, 239, 0.0)",
+          borderDash: [6, 4],
+          fill: false,
+          tension: 0.1,
+          pointBackgroundColor: "#e6e9ef",
+          pointBorderColor: "#0b0d12",
+          pointBorderWidth: 2,
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          borderWidth: 2,
+          yAxisID: "y1",
+        },
+        {
+          label: "CPI target (6%)",
+          data: labels.map(() => 6),
+          borderColor: "rgba(34, 197, 94, 0.45)",
+          backgroundColor: "rgba(34, 197, 94, 0.06)",
+          borderDash: [2, 3],
+          borderWidth: 1,
+          pointRadius: 0,
+          fill: "+1",
+          yAxisID: "y1",
+        },
+        {
+          label: "CPI floor (2%)",
+          data: labels.map(() => 2),
+          borderColor: "rgba(34, 197, 94, 0.45)",
+          backgroundColor: "rgba(34, 197, 94, 0)",
+          borderDash: [2, 3],
+          borderWidth: 1,
+          pointRadius: 0,
+          fill: false,
+          yAxisID: "y1",
         },
       ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: { mode: "index", intersect: false },
       plugins: {
-        legend: { display: false },
+        legend: {
+          display: true,
+          labels: {
+            color: "#8a93a6",
+            font: { family: "JetBrains Mono", size: 11 },
+            filter: (item) => !item.text.startsWith("CPI target") && !item.text.startsWith("CPI floor"),
+          },
+        },
         tooltip: {
           callbacks: {
-            label: (ctx) => `${ctx.parsed.y.toFixed(2)} %`,
+            label: (c) => `${c.dataset.label}: ${c.parsed.y.toFixed(2)}%`,
           },
           backgroundColor: "#141822",
           titleColor: "#e6e9ef",
@@ -619,13 +995,16 @@ function renderRateCycleChart() {
           grid: { color: "rgba(35, 42, 58, 0.6)" },
         },
         y: {
-          beginAtZero: false,
-          ticks: {
-            color: "#8a93a6",
-            font: { family: "JetBrains Mono", size: 11 },
-            callback: (v) => `${v}%`,
-          },
+          position: "left",
+          title: { display: true, text: "Repo Rate (%)", color: "#fbbf24", font: { family: "JetBrains Mono", size: 11 } },
+          ticks: { color: "#fbbf24", font: { family: "JetBrains Mono", size: 11 }, callback: (v) => `${v}%` },
           grid: { color: "rgba(35, 42, 58, 0.6)" },
+        },
+        y1: {
+          position: "right",
+          title: { display: true, text: "CPI YoY (%)", color: "#e6e9ef", font: { family: "JetBrains Mono", size: 11 } },
+          ticks: { color: "#e6e9ef", font: { family: "JetBrains Mono", size: 11 }, callback: (v) => `${v}%` },
+          grid: { drawOnChartArea: false },
         },
       },
     },
@@ -634,62 +1013,63 @@ function renderRateCycleChart() {
 
 const CA_SCENARIOS = [
   {
-    name: "Further easing",
-    trigger: "RBI cuts 25 bps",
-    rate: "-25 bps",
-    price: "+0.6%",
-    spread: "Tighten 10–15 bps",
-    action: "Add duration",
+    name: "Deep easing",
+    prob: "15%",
+    trigger: "CPI <3%, global slowdown",
+    rate: "-75 bps",
+    price: "+1.8%",
+    spread: "Tighten 40–60 bps",
+    action:
+      "Maximum duration. Load 3–4Y A-rated NCDs. Best-case for performing credit.",
     row: "supportive",
   },
   {
-    name: "Aggressive easing",
-    trigger: "RBI cuts 50 bps",
-    rate: "-50 bps",
-    price: "+1.2%",
-    spread: "Tighten 20–30 bps",
-    action: "Extend to 3–4Y paper",
+    name: "Continued easing",
+    prob: "40%",
+    trigger: "CPI 3–4%, stable crude",
+    rate: "-25 to -50 bps",
+    price: "+0.6 to +1.2%",
+    spread: "Tighten 15–30 bps",
+    action:
+      "Add duration gradually. Favour IPO-bound issuers (Indel, Fibe, KreditBee) for yield-compression kicker.",
     row: "supportive",
   },
   {
-    name: "Status quo",
-    trigger: "RBI holds",
+    name: "Extended pause",
+    prob: "25%",
+    trigger: "CPI 4–5%, crude $90–110",
     rate: "0 bps",
-    price: "Carry only",
-    spread: "Neutral",
-    action: "Hold, clip coupon",
+    price: "Carry only (10–11% coupon)",
+    spread: "Stable",
+    action:
+      "Clip coupon. Focus on high-coupon short-duration NCDs. 10.5% on 2Y paper = attractive absolute return.",
     row: "",
   },
   {
-    name: "Oil shock",
-    trigger: "Brent >$130",
-    rate: "+50 bps",
-    price: "-1.2%",
-    spread: "Widen 25–40 bps",
-    action: "Shorten duration",
+    name: "Hawkish reversal",
+    prob: "12%",
+    trigger: "Oil shock >$130, INR >100",
+    rate: "+50 to +75 bps",
+    price: "-1.2 to -1.8%",
+    spread: "Widen 30–60 bps",
+    action:
+      "Cut A-rated, move to AA secured. Shorten to <1.5Y. Avoid MFI names.",
     row: "cautious",
   },
   {
-    name: "Global risk-off",
-    trigger: "US recession / war",
-    rate: "+75 bps",
-    price: "-1.8%",
-    spread: "Widen 50–75 bps",
-    action: "Move to AAA / SDL",
-    row: "cautious",
-  },
-  {
-    name: "INR crisis",
-    trigger: "USD/INR >100",
-    rate: "+100 bps",
-    price: "-2.4%",
-    spread: "Widen 75–125 bps",
-    action: "Exit low-rated, go secured",
+    name: "Stress event",
+    prob: "8%",
+    trigger: "Geopolitical escalation, global crisis",
+    rate: "+100+ bps",
+    price: "-2.4%+",
+    spread: "Widen 75–150 bps",
+    action:
+      "Sell into any liquidity. Move to G-Sec / SDL / AAA. Check PONV triggers (ESAF). Review Kaabil covenant proximity.",
     row: "cautious",
   },
 ];
 
-function renderScenarios() {
+function renderScenarios(V) {
   const body = document.getElementById("ca-scenarios-body");
   body.innerHTML = "";
   for (const s of CA_SCENARIOS) {
@@ -697,6 +1077,7 @@ function renderScenarios() {
     if (s.row) tr.className = `row-${s.row}`;
     tr.innerHTML = `
       <td>${s.name}</td>
+      <td class="ca-prob">${s.prob}</td>
       <td>${s.trigger}</td>
       <td>${s.rate}</td>
       <td>${s.price}</td>
@@ -705,6 +1086,10 @@ function renderScenarios() {
     `;
     body.appendChild(tr);
   }
+  const foot = document.getElementById("ca-scenario-foot");
+  const brent = V.brent != null ? `$${V.brent.toFixed(2)}` : "—";
+  foot.textContent =
+    `Current scenario assessment: CONTINUED EASING (40% probability) — supported by CPI ~3.48%, repo at 5.25%, and system liquidity in surplus. Primary risk factor: crude oil at ${brent}.`;
 }
 
 function renderRelativeValue(V) {
@@ -713,20 +1098,16 @@ function renderRelativeValue(V) {
   if (!ctx) return;
 
   const rows = [
-    { label: "Bank FD 1Y", v: 6.5, sweet: false },
-    { label: "AAA Corp Bond 3Y", v: 7.2, sweet: false },
-    {
-      label: "India 10Y G-Sec",
-      v: V.in10y != null ? V.in10y : null,
-      sweet: false,
-    },
-    {
-      label: "US 10Y Treasury",
-      v: V.us10y != null ? V.us10y : null,
-      sweet: false,
-    },
-    { label: "AA Corp Bond 3Y", v: 8.5, sweet: true },
-    { label: "A-rated NBFC NCD 2Y", v: 10.0, sweet: true },
+    { label: "SBI FD 1Y",              v: 6.5,  sweet: false },
+    { label: "US 10Y Treasury",        v: V.us10y != null ? V.us10y : null, sweet: false },
+    { label: "AAA PSU Bond 3Y",        v: 7.2,  sweet: false },
+    { label: "India 10Y G-Sec",        v: V.in10y != null ? V.in10y : null, sweet: false },
+    { label: "SDL 10Y",                v: 7.30, sweet: false },
+    { label: "AA Corp Bond 3Y",        v: 8.5,  sweet: false },
+    { label: "AA NBFC NCD 2Y",         v: 9.0,  sweet: true  },
+    { label: "A+ NBFC NCD 2Y",         v: 10.0, sweet: true  },
+    { label: "MeraDhan avg coupon",    v: 10.5, sweet: true  },
+    { label: "A NBFC NCD 2Y",          v: 10.75, sweet: true },
   ];
   const labels = rows.map((r) => r.label);
   const values = rows.map((r) => (r.v == null ? 0 : r.v));
@@ -788,6 +1169,96 @@ function renderRelativeValue(V) {
   });
 }
 
+function renderSectorRadar(V) {
+  const root = document.getElementById("ca-sector-grid");
+  root.innerHTML = "";
+
+  const make = ({ cls, title, issuers, body, tag, tagText }) => {
+    const c = document.createElement("div");
+    c.className = `ca-sector-card ${cls}`;
+    c.innerHTML = `
+      <div class="ca-sector-title"></div>
+      <div class="ca-sector-issuers"></div>
+      <p class="ca-sector-body"></p>
+      <span class="ca-sector-tag ${tag}"></span>
+    `;
+    c.querySelector(".ca-sector-title").textContent = title;
+    c.querySelector(".ca-sector-issuers").textContent = issuers;
+    c.querySelector(".ca-sector-body").textContent = body;
+    c.querySelector(".ca-sector-tag").textContent = tagText;
+    root.appendChild(c);
+  };
+
+  // 1. Gold-loan NBFCs
+  const gold = V.xauusd;
+  const mcx = V.mcxGold;
+  const gold30 = V.gold_30d;
+  let goldCls = "ok", goldTag = "ok", goldTagText = "Most defensive";
+  let goldDetail =
+    "Most defensive play in current environment. Benign gold prices provide LTV cushion while rate cuts lower borrowing cost.";
+  if (gold30 != null && gold30 < -10) {
+    goldCls = "stress"; goldTag = "stress"; goldTagText = "Auction risk elevated";
+    goldDetail = "Sharp gold drop — reduce exposure and monitor auction trigger zone.";
+  } else if (gold30 != null && Math.abs(gold30) > 5) {
+    goldCls = "watch"; goldTag = "watch"; goldTagText = "Monitor LTV";
+    goldDetail = "Monitor for gold correction risk; LTV cushion adequate but not generous.";
+  }
+  const cushion = gold == null ? "—" :
+    gold30 != null && gold30 < -10 ? "thin" :
+    gold30 != null && Math.abs(gold30) > 5 ? "adequate" : "healthy";
+  const auctionRisk = gold30 != null && gold30 < -10 ? "elevated"
+    : gold30 != null && Math.abs(gold30) > 5 ? "moderate" : "low";
+  const goldStr = gold != null ? `$${gold.toFixed(0)}` : "—";
+  const mcxStr = mcx != null ? `₹${mcx.toLocaleString("en-IN", { maximumFractionDigits: 0 })}/10g` : "—";
+  make({
+    cls: goldCls,
+    title: "Gold-Loan NBFCs",
+    issuers: "Muthoot · Indel · Kosamattam",
+    body: `Gold at ${goldStr} (${mcxStr}). LTV cushion: ${cushion}. Auction risk: ${auctionRisk}. ${goldDetail}`,
+    tag: goldTag,
+    tagText: goldTagText,
+  });
+
+  // 2. Diversified NBFCs
+  make({
+    cls: "ok",
+    title: "Diversified NBFCs",
+    issuers: "Paisalo · Shriram",
+    body:
+      "Rate-cycle tailwind reducing funding costs. Bank credit to NBFCs strong at 26% YoY. Sector GNPA stable at 2.9%. Beneficiaries of rate cuts and credit demand — watch asset quality if growth stays >25% for an extended period.",
+    tag: "ok",
+    tagText: "Positive",
+  });
+
+  // 3. Small Finance Banks
+  make({
+    cls: "watch",
+    title: "Small Finance Banks",
+    issuers: "ESAF SFB",
+    body:
+      "SFB sector under asset-quality pressure. ESAF showing turnaround (PAT +₹24 Cr in Q4 FY26, GNPA improving to 5.41%). PONV clause remains a hard-override risk. Selective: maintain PONV monitoring. Underweight vs gold-loan NCDs.",
+    tag: "watch",
+    tagText: "Selective",
+  });
+
+  // 4. MFI / Consumer Lenders
+  let mfiCls = "watch", mfiTag = "watch", mfiTagText = "Selective";
+  if (V.indiavix != null && V.indiavix > 22) {
+    mfiCls = "stress"; mfiTag = "stress"; mfiTagText = "Trim exposure";
+  } else if (V.nifty != null && V.nifty > 23000 && V.indiavix != null && V.indiavix < 18) {
+    mfiCls = "ok"; mfiTag = "ok"; mfiTagText = "Compelling carry";
+  }
+  make({
+    cls: mfiCls,
+    title: "MFI / Consumer Lenders",
+    issuers: "CreditAccess · KreditBee · Fibe",
+    body:
+      "MFI sector collection efficiency recovering to ~96%. GNPA elevated at 4.1%. Karnataka ordinance impact fading. Consumer / BNPL growing but delinquency data opaque. Highest risk-reward in current environment — potential for 50–80 bps spread compression if turnaround holds, but downside severe if stress resurfaces. Position size accordingly.",
+    tag: mfiTag,
+    tagText: mfiTagText,
+  });
+}
+
 function renderCreditAnalytics(data) {
   const V = {
     in10y: caGet(data, "in10y"),
@@ -800,25 +1271,31 @@ function renderCreditAnalytics(data) {
     usdinr: caGet(data, "usdinr"),
     usdinrPct: caPctChange(data, "usdinr"),
     gold_30d: caGet(data, "gold_30d_pct"),
+    xauusd: caGet(data, "xauusd"),
+    mcxGold: caGet(data, "mcx_gold_inr_10g"),
     nifty: caGet(data, "nifty"),
     nifty_wk: caGet(data, "nifty_wk_pct"),
   };
 
-  document.getElementById("ca-date").textContent = new Date().toLocaleDateString(
-    undefined,
-    { year: "numeric", month: "short", day: "numeric" },
-  );
+  // Component 1: Regime banner
+  const regime = caDetectRegime(V);
+  const banner = document.getElementById("ca-regime");
+  banner.className = `ca-regime ${regime.id}`;
+  document.getElementById("ca-regime-pill").textContent = regime.label;
+  document.getElementById("ca-regime-text").textContent = regime.text;
+  const dateStr = new Date().toLocaleDateString(undefined, {
+    year: "numeric", month: "short", day: "numeric",
+  });
+  document.getElementById("ca-regime-meta").textContent =
+    `Regime since: ${dateStr} · live cross-asset read`;
 
-  const outlook = buildCreditOutlook(V);
-  document.getElementById("ca-narrative").textContent = outlook.paragraph;
-  const posEl = document.getElementById("ca-positioning");
-  posEl.innerHTML = `Net assessment: <span class="ca-stance ${outlook.stanceCls}">${outlook.stance}</span> for performing credit. Favour ${outlook.action}.`;
+  // Component 2-3, 5, 7: data-driven sections (no chart deps)
+  renderSignalMatrix(V);
+  renderWaterfall();
+  renderScenarios(V);
+  renderSectorRadar(V);
 
-  renderRiskMatrix(V);
-  renderScenarios();
-
-  // Charts depend on Chart.js (loaded with defer). Try now, retry shortly
-  // if the library hasn't arrived yet.
+  // Components 4, 6: charts (depend on Chart.js loaded with defer)
   const tryCharts = () => {
     if (typeof Chart === "undefined") {
       setTimeout(tryCharts, 100);
@@ -828,6 +1305,18 @@ function renderCreditAnalytics(data) {
     renderRelativeValue(V);
   };
   tryCharts();
+
+  // Disclaimer timestamp
+  const disc = document.getElementById("ca-disclaimer");
+  if (data.updatedAt) {
+    const d = new Date(data.updatedAt);
+    const ts = d.toLocaleString(undefined, {
+      year: "numeric", month: "short", day: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
+    disc.textContent =
+      `Analysis auto-generated from live market data. Not investment advice. Updated: ${ts}`;
+  }
 }
 
 document.getElementById("refresh").addEventListener("click", refresh);
