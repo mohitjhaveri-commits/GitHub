@@ -1,8 +1,8 @@
 {
   "_meta": {
-    "description": "Manually-maintained India credit signals. Live ones (Brent, DXY, US10Y, USDINR, NIFTY, India VIX, India 10Y G-Sec, MCX Gold) are fetched from Stooq in app.js and don't appear here.",
-    "instructions": "For each signal, set `value` to the latest reading and `previous` to the prior reading. `asof` is the date the value applies to (YYYY-MM-DD). `unit` is informational only.",
-    "lastReviewed": "2026-05-22"
+    "description": "Manually-maintained India credit signals. Live ones (Brent, DXY, US10Y, USDINR, NIFTY, India VIX, India 10Y G-Sec, MCX Gold, US IG OAS, Gold 30d, Nifty 5d, India 5Y CDS, NHB Refinance Rate) are fetched server-side and don't appear here.",
+    "instructions": "For each signal, set `value` to the latest reading and `previous` to the prior reading. `asof` is the date or period the value applies to. `unit` is informational only.",
+    "lastReviewed": "2026-05-23"
   },
   "groups": {
     "Global Tape": [
@@ -10,34 +10,34 @@
     ],
     "Domestic Rates & Flows": [
       { "key": "slope_2_10", "label": "2Y-10Y Slope", "unit": "bps", "value": null, "previous": null, "asof": null },
-      { "key": "fpi_debt_wk", "label": "FPI Debt Flow (weekly)", "unit": "$ mn", "value": null, "previous": null, "asof": null },
-      { "key": "laf_net",    "label": "RBI LAF Net",           "unit": "₹K Cr", "value": null, "previous": null, "asof": null },
-      { "key": "system_laf", "label": "System Liquidity LAF",  "unit": "₹L Cr", "value": null, "previous": null, "asof": null },
+      { "key": "fpi_debt_wk", "label": "FPI Debt Flow (weekly)", "unit": "₹ Cr net", "value": 13964, "previous": null, "asof": "FY26 full year" },
+      { "key": "laf_net",    "label": "RBI LAF Net",           "unit": "₹ Tn surplus", "value": 1.50, "previous": 1.82, "asof": "2026-05-20" },
+      { "key": "system_laf", "label": "System Liquidity LAF",  "unit": "₹ Tn surplus", "value": 1.50, "previous": 1.82, "asof": "2026-05-20" },
       { "key": "cp_tbill",   "label": "CP-Tbill Spread",        "unit": "bps", "value": null, "previous": null, "asof": null, "invertColor": true }
     ],
     "Bank / NBFC Credit": [
-      { "key": "bank_credit_nbfc_yoy", "label": "Bank Credit to NBFCs YoY", "unit": "%", "value": null, "previous": null, "asof": null },
-      { "key": "nbfc_gnpa",  "label": "NBFC Sector GNPA",      "unit": "%",   "value": null, "previous": null, "asof": null, "invertColor": true },
-      { "key": "dep_credit_gap", "label": "Deposit-Credit Gap","unit": "%",   "value": null, "previous": null, "asof": null, "invertColor": true },
+      { "key": "bank_credit_nbfc_yoy", "label": "Bank Credit to NBFCs YoY", "unit": "%", "value": 26.0, "previous": 6.4, "asof": "FY26" },
+      { "key": "nbfc_gnpa",  "label": "NBFC Sector GNPA",      "unit": "%",   "value": 2.9, "previous": 3.5, "asof": "Mar 2025", "invertColor": true },
+      { "key": "dep_credit_gap", "label": "Deposit-Credit Gap","unit": "pp",  "value": 5.8, "previous": null, "asof": "FY26", "invertColor": true },
       { "key": "ncd_subs",   "label": "NCD Subscription Ratio","unit": "x",   "value": null, "previous": null, "asof": null },
       { "key": "ncd_issue",  "label": "NBFC NCD Issuance",    "unit": "₹ Cr", "value": null, "previous": null, "asof": null },
       { "key": "new_issue_premium", "label": "New Issue Premium", "unit": "bps", "value": null, "previous": null, "asof": null, "invertColor": true },
       { "key": "mf_debt_aum",  "label": "MF Debt AUM Δ (monthly)", "unit": "₹K Cr", "value": null, "previous": null, "asof": null }
     ],
     "Macro Activity": [
-      { "key": "cpi_yoy",       "label": "CPI YoY",            "unit": "%", "value": null, "previous": null, "asof": null, "invertColor": true },
-      { "key": "rural_cpi_yoy", "label": "Rural CPI YoY",      "unit": "%", "value": null, "previous": null, "asof": null, "invertColor": true },
-      { "key": "pmi_mfg",       "label": "PMI Manufacturing",  "unit": "",  "value": null, "previous": null, "asof": null },
-      { "key": "gst_yoy",       "label": "GST Collection YoY", "unit": "%", "value": null, "previous": null, "asof": null },
-      { "key": "fiscal_runrate","label": "Fiscal Deficit Run-Rate", "unit": "% target", "value": null, "previous": null, "asof": null, "invertColor": true }
+      { "key": "cpi_yoy",       "label": "CPI YoY",            "unit": "%", "value": 3.48, "previous": 3.40, "asof": "Apr 2026", "invertColor": true },
+      { "key": "rural_cpi_yoy", "label": "Rural CPI YoY",      "unit": "%", "value": 3.74, "previous": 3.63, "asof": "Apr 2026", "invertColor": true },
+      { "key": "pmi_mfg",       "label": "PMI Manufacturing",  "unit": "",  "value": 57.6, "previous": 58.2, "asof": "May 2026" },
+      { "key": "gst_yoy",       "label": "GST Collection YoY", "unit": "%", "value": 8.7, "previous": 8.8, "asof": "Apr 2026" },
+      { "key": "fiscal_runrate","label": "Fiscal Deficit Run-Rate", "unit": "% of GDP", "value": 4.3, "previous": 4.4, "asof": "FY27 BE", "invertColor": true }
     ],
     "Gold Loans / MFI / Housing": [
       { "key": "avg_ltv",       "label": "Avg LTV in Portfolio","unit": "%", "value": null, "previous": null, "asof": null, "invertColor": true },
       { "key": "gold_auction",  "label": "Gold Auction Rate",   "unit": "%", "value": null, "previous": null, "asof": null, "invertColor": true },
-      { "key": "mfin_collect",  "label": "MFIN Collection Efficiency", "unit": "%", "value": null, "previous": null, "asof": null },
-      { "key": "mfi_gnpa",      "label": "MFI Sector GNPA",     "unit": "%", "value": null, "previous": null, "asof": null, "invertColor": true },
+      { "key": "mfin_collect",  "label": "MFIN Collection Efficiency", "unit": "%", "value": 96.0, "previous": 97.9, "asof": "Q3 FY26" },
+      { "key": "mfi_gnpa",      "label": "MFI Sector GNPA",     "unit": "%", "value": 4.1, "previous": 2.0, "asof": "Mar 2025", "invertColor": true },
       { "key": "rbi_mfi_action","label": "RBI MFI Regulatory Action", "unit": "0/1", "value": null, "previous": null, "asof": null, "invertColor": true },
-      { "key": "property_idx",  "label": "Property Price Index (RBI)", "unit": "", "value": null, "previous": null, "asof": null },
+      { "key": "property_idx",  "label": "Property Price Index (RBI)", "unit": "% YoY", "value": 3.58, "previous": 3.6, "asof": "Q3 FY26 (Dec 2025)" },
       { "key": "hfl_spread",    "label": "HDFC/LIC HFL Primary Spread", "unit": "bps", "value": null, "previous": null, "asof": null, "invertColor": true }
     ],
     "Digital / Regulation": [
