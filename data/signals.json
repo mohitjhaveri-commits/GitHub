@@ -10,9 +10,9 @@
     },
     "btc": {
       "asof": "2026-05-23",
-      "previous": 77378.18465344793,
+      "previous": 77249.54829176833,
       "source": "CoinGecko (bitcoin)",
-      "value": 74460.0
+      "value": 74443.0
     },
     "dow": {
       "asof": "2026-05-22",
@@ -28,9 +28,9 @@
     },
     "eth": {
       "asof": "2026-05-23",
-      "previous": 2127.8551692221827,
+      "previous": 2123.362304294109,
       "source": "CoinGecko (ethereum)",
-      "value": 2023.77
+      "value": 2023.64
     },
     "eurusd": {
       "asof": "2026-05-22",
@@ -44,7 +44,18 @@
       "source": "Yahoo (GC=F, 30d % change)",
       "value": -5.058903111868898
     },
-    "in10y": null,
+    "in10y": {
+      "asof": "2026-05-23",
+      "previous": null,
+      "source": "economictimes.indiatimes.com (min plausible)",
+      "value": 6.48
+    },
+    "ind_us_10y_spread": {
+      "asof": "2026-05-23",
+      "previous": null,
+      "source": "derived (in10y - us10y)",
+      "value": 1.9100000000000001
+    },
     "india_5y_cds": null,
     "indiavix": {
       "asof": "2026-05-22",
@@ -85,9 +96,9 @@
     },
     "sol": {
       "asof": "2026-05-23",
-      "previous": 87.21840945699506,
+      "previous": 87.21785993055167,
       "source": "CoinGecko (solana)",
-      "value": 82.03
+      "value": 82.0
     },
     "sp500": {
       "asof": "2026-05-22",
@@ -157,5 +168,5 @@
       "value": 4521.0
     }
   },
-  "updatedAt": "2026-05-23T08:34:21Z"
+  "updatedAt": "2026-05-23T08:35:58Z"
 }
