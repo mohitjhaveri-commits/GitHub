@@ -398,46 +398,6 @@ def _fetch_india_10y_api() -> dict | None:
     return None
 
 
-def _fetch_india_10y_moneycontrol() -> dict | None:
-    """Scrape moneycontrol.com's India 10Y G-Sec page."""
-    # The standard URL for the 10Y G-Sec quote on moneycontrol.
-    url = "https://www.moneycontrol.com/indian-indices/india-10-year-bond-yield-87.html"
-    try:
-        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
-    except Exception as e:
-        print(f"[moneycontrol india10y] network: {e}", file=sys.stderr)
-        return None
-    if status != 200:
-        print(f"[moneycontrol india10y] HTTP {status}", file=sys.stderr)
-        return None
-    # Moneycontrol renders the current price in a span like:
-    #   <div class="inprice1 nsecp">6.34</div> or <span id="...">6.34</span>
-    # Try a few patterns.
-    patterns = [
-        r'class="inprice1[^"]*"[^>]*>\s*([\d,]+\.\d+)',
-        r'id="bse_quote"[^>]*>\s*([\d,]+\.\d+)',
-        r'"last_price"\s*:\s*"?([\d,]+\.\d+)"?',
-        r'"lastTradedPrice"\s*:\s*"?([\d,]+\.\d+)"?',
-    ]
-    for pat in patterns:
-        m = re.search(pat, html)
-        if m:
-            try:
-                return {
-                    "value": float(m.group(1).replace(",", "")),
-                    "previous": None,
-                    "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-                    "source": "moneycontrol.com",
-                }
-            except ValueError:
-                continue
-    print(
-        f"[moneycontrol india10y] no match; html length={len(html)}",
-        file=sys.stderr,
-    )
-    return None
-
-
 def _fetch_india_10y_wgb() -> dict | None:
     """Scrape worldgovernmentbonds.com - more targeted regex than before."""
     url = "http://www.worldgovernmentbonds.com/country/india/"
@@ -674,19 +634,99 @@ def fetch_rbi_3m_tbill() -> dict | None:
     return None
 
 
+def _fetch_india_10y_moneycontrol() -> dict | None:
+    """Scrape moneycontrol.com - tries the dedicated quote page and the
+    bond-yields markets page."""
+    urls = [
+        "https://www.moneycontrol.com/indian-indices/india-10-year-bond-yield-87.html",
+        "https://www.moneycontrol.com/markets/bond-yields/",
+        "https://www.moneycontrol.com/news/business/markets/bond-yields-india",
+        "https://www.moneycontrol.com/markets/global-indices/",
+    ]
+    patterns = [
+        # Common moneycontrol price patterns
+        r'class="inprice1[^"]*"[^>]*>\s*([\d,]+\.\d+)',
+        r'id="b_(?:bse|nse)_quote"[^>]*>\s*([\d,]+\.\d+)',
+        r'"last_price"\s*:\s*"?([\d,]+\.\d+)"?',
+        r'"lastTradedPrice"\s*:\s*"?([\d,]+\.\d+)"?',
+        # Anchored to "India 10 Year"
+        r"India\s*10[\s\-]*Year[^%\d<]{0,80}?([\d.]+)\s*%",
+        r"India\s*10[\s\-]*Year[^<]*</[^>]+>\s*<[^>]*>\s*([\d.]+)",
+    ]
+    for url in urls:
+        try:
+            status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+        except Exception as e:
+            print(f"[moneycontrol {url}] network: {e}", file=sys.stderr)
+            continue
+        if status != 200:
+            print(f"[moneycontrol {url}] HTTP {status}", file=sys.stderr)
+            continue
+        for pat in patterns:
+            for m in re.finditer(pat, html, re.IGNORECASE | re.DOTALL):
+                try:
+                    val = float(m.group(1).replace(",", ""))
+                except ValueError:
+                    continue
+                # Tight India 10Y G-Sec sanity range
+                if 5.0 <= val <= 9.0:
+                    return {
+                        "value": val,
+                        "previous": None,
+                        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                        "source": f"moneycontrol.com ({url.rsplit('/', 1)[-1] or 'home'})",
+                    }
+        print(f"[moneycontrol {url}] no plausible 5-9% match", file=sys.stderr)
+    return None
+
+
+def _fetch_india_10y_et() -> dict | None:
+    """Scrape economictimes.indiatimes.com bonds page."""
+    url = "https://economictimes.indiatimes.com/markets/bonds"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[et india10y] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[et india10y] HTTP {status}", file=sys.stderr)
+        return None
+    patterns = [
+        r"India\s*10[\s\-]*Year[^<]*</[^>]+>\s*<[^>]*>\s*([\d.]+)",
+        r"10\s*Year\s*GOI[^%\d]{0,80}?([\d.]+)\s*%",
+        r"India\s*10Y[^%\d]{0,80}?([\d.]+)\s*%",
+    ]
+    for pat in patterns:
+        for m in re.finditer(pat, html, re.IGNORECASE | re.DOTALL):
+            try:
+                val = float(m.group(1))
+            except ValueError:
+                continue
+            if 5.0 <= val <= 9.0:
+                return {
+                    "value": val,
+                    "previous": None,
+                    "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                    "source": "economictimes.indiatimes.com",
+                }
+    print("[et india10y] no plausible 5-9% match", file=sys.stderr)
+    return None
+
+
 def fetch_india_10y() -> dict | None:
-    """Fetch India 10Y G-Sec yield. Tries investing.com first (HTML, then
-    API with pair-id search), then falls back to Indian/free sources."""
+    """Fetch India 10Y G-Sec yield. moneycontrol first (per user
+    preference), then Indian-news fallbacks. investing.com is omitted
+    because its public pair-id 941706 is not the G-Sec benchmark and the
+    main HTML page is Cloudflare-blocked."""
     for name, fn in (
-        ("investing-html", _fetch_india_10y_html),
-        ("investing-api", _fetch_india_10y_api),
         ("moneycontrol", _fetch_india_10y_moneycontrol),
+        ("economic-times", _fetch_india_10y_et),
         ("wgb", _fetch_india_10y_wgb),
     ):
         result = fn()
         if result and result.get("value") is not None:
             v = result["value"]
-            if 3.0 <= v <= 12.0:
+            if 5.0 <= v <= 9.0:
                 print(f"[india_10y] success via {name}: {v}", file=sys.stderr)
                 return result
             print(
