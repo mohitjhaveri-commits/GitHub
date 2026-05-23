@@ -4,7 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Macro Signals Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    />
     <link rel="stylesheet" href="styles.css" />
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+      defer
+    ></script>
   </head>
   <body>
     <header>
@@ -48,6 +58,63 @@
           </p>
         </div>
         <div id="india-subgroups"></div>
+      </section>
+
+      <section id="credit-analytics" class="credit-analytics">
+        <div class="ca-header">
+          <h2>📊 CREDIT ANALYTICS</h2>
+        </div>
+
+        <div class="ca-outlook">
+          <div class="ca-outlook-title">
+            <span class="ca-title-text">CREDIT OUTLOOK</span>
+            <span class="ca-date" id="ca-date"></span>
+          </div>
+          <p class="ca-narrative" id="ca-narrative"></p>
+          <div class="ca-positioning" id="ca-positioning"></div>
+        </div>
+
+        <h3 class="ca-section-title">Macro Risk Matrix</h3>
+        <div class="ca-risk-grid" id="ca-risk-grid"></div>
+        <div class="ca-risk-summary" id="ca-risk-summary"></div>
+
+        <h3 class="ca-section-title">RBI Rate Cycle</h3>
+        <div class="ca-chart-wrap">
+          <canvas id="ca-rate-chart"></canvas>
+        </div>
+        <div class="ca-annot" id="ca-rate-annot">
+          125 bps easing since Feb 2025 · Next MPC: June 2026
+        </div>
+
+        <h3 class="ca-section-title">Scenario Analysis</h3>
+        <div class="ca-table-wrap">
+          <table class="ca-scenarios">
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>Trigger</th>
+                <th>Rate Δ</th>
+                <th>Price Impact (2.5Y)</th>
+                <th>Spread Impact (A/AA NCD)</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ca-scenarios-body"></tbody>
+          </table>
+        </div>
+        <div class="ca-footnote">
+          Based on modified duration approximation for a typical MeraDhan
+          portfolio. Illustrative only — not investment advice.
+        </div>
+
+        <h3 class="ca-section-title">Where Does Performing Credit Sit?</h3>
+        <div class="ca-chart-wrap">
+          <canvas id="ca-relative-chart"></canvas>
+        </div>
+
+        <div class="ca-disclaimer">
+          Analysis auto-generated from live market data.
+        </div>
       </section>
     </main>
 
