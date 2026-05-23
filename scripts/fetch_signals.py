@@ -591,6 +591,89 @@ def fetch_nhb_refinance() -> dict | None:
     return None
 
 
+# -------- Credit leading indicators (best-effort scrapes) --------
+
+def fetch_sbi_mclr_1y() -> dict | None:
+    """Scrape SBI 1-Year MCLR from sbi.co.in."""
+    url = "https://sbi.co.in/web/interest-rates/interest-rates/mclr"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[sbi mclr] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[sbi mclr] HTTP {status}", file=sys.stderr)
+        return None
+    # The MCLR table on SBI's page has rows like:
+    #   <td>One Year</td> <td>8.95%</td>
+    patterns = [
+        r"One\s*Year[^<]*</td[^>]*>\s*<td[^>]*>\s*([\d.]+)\s*%?",
+        r"1\s*Year[^<]*</td[^>]*>\s*<td[^>]*>\s*([\d.]+)\s*%?",
+        r"1\s*Yr[^<]*</td[^>]*>\s*<td[^>]*>\s*([\d.]+)",
+    ]
+    for pat in patterns:
+        m = re.search(pat, html, re.IGNORECASE | re.DOTALL)
+        if m:
+            try:
+                val = float(m.group(1))
+                if 6.0 <= val <= 14.0:
+                    return {
+                        "value": val,
+                        "previous": None,
+                        "asof": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                        "source": "sbi.co.in (MCLR page)",
+                    }
+            except ValueError:
+                continue
+    print("[sbi mclr] no plausible 1Y match", file=sys.stderr)
+    return None
+
+
+def fetch_fbil_corporate_yield(rating: str = "AAA", tenor: str = "5") -> dict | None:
+    """Best-effort scrape of FBIL corporate bond benchmark yield."""
+    # FBIL publishes daily corporate bond curves; the public page lists
+    # benchmark rates in a table.
+    url = "https://www.fbil.org.in/#/home"
+    try:
+        status, html = _fetch_with_status(url, BROWSER_HEADERS, timeout=20)
+    except Exception as e:
+        print(f"[fbil {rating} {tenor}y] network: {e}", file=sys.stderr)
+        return None
+    if status != 200:
+        print(f"[fbil {rating} {tenor}y] HTTP {status}", file=sys.stderr)
+        return None
+    # FBIL is a SPA, the homepage HTML usually has very little data
+    # embedded. Mark as unsupported until a stable JSON endpoint is
+    # discovered.
+    print(
+        f"[fbil {rating} {tenor}y] page is SPA-rendered; no stable data endpoint found",
+        file=sys.stderr,
+    )
+    return None
+
+
+def fetch_aa_aaa_spread() -> dict | None:
+    aaa = fetch_fbil_corporate_yield("AAA", "5")
+    aa = fetch_fbil_corporate_yield("AA", "5")
+    if not aaa or not aa:
+        return None
+    return {
+        "value": (aa["value"] - aaa["value"]) * 100,  # to bps
+        "previous": None,
+        "asof": aaa["asof"],
+        "source": "derived (FBIL AA5y - AAA5y)",
+    }
+
+
+def fetch_rbi_3m_tbill() -> dict | None:
+    """Best-effort: scrape latest RBI 91-day T-Bill auction cut-off."""
+    # RBI publishes auction results as press releases; URL changes per
+    # release so there's no stable scrape target without an index page
+    # crawl. Mark as unsupported for now.
+    print("[rbi 3m tbill] no stable scrape target available", file=sys.stderr)
+    return None
+
+
 def fetch_india_10y() -> dict | None:
     """Fetch India 10Y G-Sec yield. Tries investing.com first (HTML, then
     API with pair-id search), then falls back to Indian/free sources."""
@@ -677,6 +760,11 @@ SIGNALS: dict[str, tuple[str, str]] = {
     "nifty_wk_pct":   ("pct_change",  "^NSEI:5"),
     "india_5y_cds":   ("india5ycds",  ""),
     "nhb_refi_rate":  ("nhb",         ""),
+    # Credit Leading Indicators (best-effort)
+    "sbi_1y_mclr":            ("sbi_mclr",      ""),
+    "aaa_5y_corp_bond_yield": ("fbil_corp",     "AAA:5"),
+    "aa_aaa_spread":          ("aa_aaa_spread", ""),
+    "tbill_3m_yield":         ("rbi_3m_tbill",  ""),
 }
 
 
@@ -697,6 +785,15 @@ def fetch_one(kind: str, target: str) -> dict | None:
         # target is "SYMBOL:N" where N is trading days
         sym, n = target.rsplit(":", 1)
         return fetch_pct_change(sym, int(n))
+    if kind == "sbi_mclr":
+        return fetch_sbi_mclr_1y()
+    if kind == "fbil_corp":
+        rating, tenor = target.split(":")
+        return fetch_fbil_corporate_yield(rating, tenor)
+    if kind == "aa_aaa_spread":
+        return fetch_aa_aaa_spread()
+    if kind == "rbi_3m_tbill":
+        return fetch_rbi_3m_tbill()
     return None
 
 

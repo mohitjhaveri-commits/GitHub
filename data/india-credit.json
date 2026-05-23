@@ -5,6 +5,15 @@
     "lastReviewed": "2026-05-23"
   },
   "groups": {
+    "Credit Leading Indicators": [
+      { "key": "rbi_repo_rate",          "label": "RBI Repo Rate",       "unit": "%",   "value": 5.25, "previous": 5.50, "asof": "Feb 2026", "invertColor": true },
+      { "key": "wacr",                   "label": "WACR (Call Rate)",     "unit": "%",   "value": null, "previous": null, "asof": null },
+      { "key": "tbill_3m_yield",         "label": "3M T-Bill Yield",      "unit": "%",   "value": null, "previous": null, "asof": null },
+      { "key": "aaa_5y_corp_bond_yield", "label": "AAA 5Y Corp Bond",     "unit": "%",   "value": null, "previous": null, "asof": null },
+      { "key": "aa_aaa_spread",          "label": "AA-AAA Spread",        "unit": "bps", "value": null, "previous": null, "asof": null, "invertColor": true },
+      { "key": "sbi_1y_mclr",            "label": "SBI 1Y MCLR",          "unit": "%",   "value": null, "previous": null, "asof": null, "invertColor": true },
+      { "key": "credit_deposit_ratio",   "label": "Credit-Deposit Ratio", "unit": "%",   "value": null, "previous": null, "asof": null }
+    ],
     "Global Tape": [
       { "key": "india_embi",  "label": "India EMBI Spread", "unit": "bps", "value": null, "previous": null, "asof": null, "invertColor": true }
     ],

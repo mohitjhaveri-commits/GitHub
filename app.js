@@ -214,16 +214,18 @@ function renderIndia(data, manual) {
   const root = document.getElementById("india-subgroups");
   root.innerHTML = "";
 
-  // Live Tape
+  // Live Tape (always shown; signals.json may have nulls for individual cards)
   const liveWrap = document.createElement("div");
   liveWrap.className = "subgroup";
   liveWrap.innerHTML = '<h3>Live Tape</h3><div class="grid"></div>';
   const liveGrid = liveWrap.querySelector(".grid");
   root.appendChild(liveWrap);
   for (const view of INDIA_LIVE_VIEW) {
+    const sig = data.signals[view.key];
+    if (!sig || sig.value === null || sig.value === undefined) continue;
     const el = cardEl(view.label, true);
     liveGrid.appendChild(el);
-    renderCard(el, view, data.signals[view.key]);
+    renderCard(el, view, sig);
   }
 
   if (!manual) return;
@@ -237,10 +239,25 @@ function renderIndia(data, manual) {
     wrap.appendChild(h);
     wrap.appendChild(grid);
     root.appendChild(wrap);
+
     for (const sig of sigs) {
+      // Prefer live value from signals.json if present.
+      const live = data.signals[sig.key];
+      if (live && live.value !== null && live.value !== undefined) {
+        const el = cardEl(sig.label, true);
+        grid.appendChild(el);
+        renderCard(el, { suffix: sig.unit ? ` ${sig.unit}` : "" }, live);
+        continue;
+      }
+      // Otherwise use the manual value if present.
+      if (sig.value === null || sig.value === undefined) continue;
       const el = cardEl(sig.label, true);
       grid.appendChild(el);
       renderManualCard(el, sig);
+    }
+
+    if (grid.children.length === 0) {
+      wrap.remove();
     }
   }
 }
