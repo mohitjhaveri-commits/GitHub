@@ -6,13 +6,13 @@
       "asof": "2026-05-22",
       "previous": 102.58000183105469,
       "source": "Yahoo (BZ=F)",
-      "value": 103.54000091552734
+      "value": 100.20999908447266
     },
     "btc": {
-      "asof": "2026-05-23",
-      "previous": 75918.3567805867,
+      "asof": "2026-05-24",
+      "previous": 74573.98388536279,
       "source": "CoinGecko (bitcoin)",
-      "value": 76992.0
+      "value": 76786.0
     },
     "dow": {
       "asof": "2026-05-22",
@@ -27,10 +27,10 @@
       "value": 99.31999969482422
     },
     "eth": {
-      "asof": "2026-05-23",
-      "previous": 2071.0230527616295,
+      "asof": "2026-05-24",
+      "previous": 2026.7143728638405,
       "source": "CoinGecko (ethereum)",
-      "value": 2130.21
+      "value": 2118.84
     },
     "eurusd": {
       "asof": "2026-05-22",
@@ -42,16 +42,16 @@
       "asof": "2026-05-22",
       "previous": -5.266899969493886,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -5.058903111868898
+      "value": -5.012698963154703
     },
     "in10y": {
-      "asof": "2026-05-23",
+      "asof": "2026-05-24",
       "previous": null,
       "source": "economictimes.indiatimes.com (median plausible)",
       "value": 7.0636
     },
     "ind_us_10y_spread": {
-      "asof": "2026-05-23",
+      "asof": "2026-05-24",
       "previous": null,
       "source": "derived (in10y - us10y)",
       "value": 2.4936
@@ -67,7 +67,7 @@
       "asof": "2026-05-22",
       "previous": 140373.34636334766,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 139074.14965508695
+      "value": 139141.83164848687
     },
     "nasdaq100": {
       "asof": "2026-05-22",
@@ -89,16 +89,16 @@
       "value": 0.3205988167995432
     },
     "sbi_1y_mclr": {
-      "asof": "2026-05-23",
+      "asof": "2026-05-24",
       "previous": null,
       "source": "sbi.co.in (MCLR page)",
       "value": 8.7
     },
     "sol": {
-      "asof": "2026-05-23",
-      "previous": 84.94180783621218,
+      "asof": "2026-05-24",
+      "previous": 81.98819460344933,
       "source": "CoinGecko (solana)",
-      "value": 86.86
+      "value": 86.4
     },
     "sp500": {
       "asof": "2026-05-22",
@@ -165,8 +165,8 @@
       "asof": "2026-05-22",
       "previous": 4539.7998046875,
       "source": "Yahoo (GC=F)",
-      "value": 4521.0
+      "value": 4523.2001953125
     }
   },
-  "updatedAt": "2026-05-23T21:11:27Z"
+  "updatedAt": "2026-05-24T09:12:15Z"
 }
