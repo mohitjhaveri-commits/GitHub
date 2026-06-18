@@ -6,43 +6,43 @@
       "asof": "2026-06-18",
       "previous": 79.55000305175781,
       "source": "Yahoo (BZ=F)",
-      "value": 78.51000213623047
+      "value": 77.54000091552734
     },
     "btc": {
       "asof": "2026-06-18",
-      "previous": 64819.37311576276,
+      "previous": 65675.67227559668,
       "source": "CoinGecko (bitcoin)",
-      "value": 63986.0
+      "value": 62549.0
     },
     "dow": {
-      "asof": "2026-06-17",
-      "previous": 51999.671875,
+      "asof": "2026-06-18",
+      "previous": 51492.55078125,
       "source": "Yahoo (^DJI)",
-      "value": 51492.55078125
+      "value": 51680.53125
     },
     "dxy": {
       "asof": "2026-06-18",
       "previous": 100.08999633789062,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 100.7030029296875
+      "value": 100.68800354003906
     },
     "eth": {
       "asof": "2026-06-18",
-      "previous": 1770.4691796645552,
+      "previous": 1769.7260969885765,
       "source": "CoinGecko (ethereum)",
-      "value": 1740.28
+      "value": 1690.3
     },
     "eurusd": {
       "asof": "2026-06-18",
       "previous": 1.1609952449798584,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1467890739440918
+      "value": 1.1478420495986938
     },
     "gold_30d_pct": {
       "asof": "2026-06-18",
       "previous": -4.3219612534589,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -8.481601613427541
+      "value": -9.218481955160806
     },
     "in10y": null,
     "india_5y_cds": null,
@@ -56,13 +56,13 @@
       "asof": "2026-06-18",
       "previous": 132978.57902408473,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 129938.80547487886
+      "value": 128885.45698227429
     },
     "nasdaq100": {
-      "asof": "2026-06-17",
-      "previous": 29968.130859375,
+      "asof": "2026-06-18",
+      "previous": 29670.94921875,
       "source": "Yahoo (^NDX)",
-      "value": 29670.94921875
+      "value": 30302.521484375
     },
     "nhb_refi_rate": null,
     "nifty": {
@@ -77,23 +77,18 @@
       "source": "Yahoo (^NSEI, 5d % change)",
       "value": 4.345124721945562
     },
-    "sbi_1y_mclr": {
-      "asof": "2026-06-18",
-      "previous": null,
-      "source": "sbi.co.in (MCLR page)",
-      "value": 8.7
-    },
+    "sbi_1y_mclr": null,
     "sol": {
       "asof": "2026-06-18",
-      "previous": 72.30115347262388,
+      "previous": 73.49777801885794,
       "source": "CoinGecko (solana)",
-      "value": 71.11
+      "value": 68.78
     },
     "sp500": {
-      "asof": "2026-06-17",
-      "previous": 7511.35009765625,
+      "asof": "2026-06-18",
+      "previous": 7420.10009765625,
       "source": "Yahoo (^GSPC)",
-      "value": 7420.10009765625
+      "value": 7493.419921875
     },
     "tbill_3m_yield": null,
     "us10y": {
@@ -121,41 +116,41 @@
       "value": 4.93
     },
     "us_ig_oas": {
-      "asof": "2026-06-16",
-      "previous": 0.73,
+      "asof": "2026-06-17",
+      "previous": 0.75,
       "source": "FRED (BAMLC0A0CM)",
-      "value": 0.75
+      "value": 0.74
     },
     "usdinr": {
       "asof": "2026-06-18",
       "previous": 94.88860321044922,
       "source": "Yahoo (USDINR=X)",
-      "value": 94.322998046875
+      "value": 94.31999969482422
     },
     "usdjpy": {
       "asof": "2026-06-18",
       "previous": 160.41900634765625,
       "source": "Yahoo (USDJPY=X)",
-      "value": 160.92999267578125
+      "value": 161.0919952392578
     },
     "vix": {
       "asof": "2026-06-18",
       "previous": 18.440000534057617,
       "source": "Yahoo (^VIX)",
-      "value": 17.110000610351562
+      "value": 17.170000076293945
     },
     "wti": {
       "asof": "2026-06-18",
       "previous": 76.79000091552734,
       "source": "Yahoo (CL=F)",
-      "value": 74.55999755859375
+      "value": 73.83000183105469
     },
     "xauusd": {
       "asof": "2026-06-18",
       "previous": 4358.89990234375,
       "source": "Yahoo (GC=F)",
-      "value": 4284.7998046875
+      "value": 4250.2001953125
     }
   },
-  "updatedAt": "2026-06-18T10:50:11Z"
+  "updatedAt": "2026-06-18T15:54:32Z"
 }
