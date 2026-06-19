@@ -6,49 +6,49 @@
       "asof": "2026-06-19",
       "previous": 79.8499984741211,
       "source": "Yahoo (BZ=F)",
-      "value": 79.69999694824219
+      "value": 80.45999908447266
     },
     "btc": {
       "asof": "2026-06-19",
-      "previous": 64060.55460081613,
+      "previous": 62669.26499140358,
       "source": "CoinGecko (bitcoin)",
-      "value": 62509.0
+      "value": 63166.0
     },
     "dow": {
-      "asof": "2026-06-17",
-      "previous": 51999.671875,
+      "asof": "2026-06-18",
+      "previous": 51492.55078125,
       "source": "Yahoo (^DJI)",
-      "value": 51492.55078125
+      "value": 51564.69921875
     },
     "dxy": {
       "asof": "2026-06-19",
-      "previous": 100.08999633789062,
+      "previous": 100.8499984741211,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 100.78900146484375
+      "value": 100.80000305175781
     },
     "eth": {
       "asof": "2026-06-19",
-      "previous": 1746.5780200486988,
+      "previous": 1699.127447436417,
       "source": "CoinGecko (ethereum)",
-      "value": 1692.22
+      "value": 1707.97
     },
     "eurusd": {
       "asof": "2026-06-19",
       "previous": 1.150734782218933,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1465259790420532
+      "value": 1.1467890739440918
     },
     "gold_30d_pct": {
       "asof": "2026-06-19",
       "previous": -9.77807758039266,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -11.268556776541553
+      "value": -11.274946260801086
     },
     "in10y": null,
     "india_5y_cds": null,
     "indiavix": {
       "asof": "2026-06-19",
-      "previous": 13.1899995803833,
+      "previous": 12.670000076293945,
       "source": "Yahoo (^INDIAVIX)",
       "value": 12.970000267028809
     },
@@ -56,39 +56,39 @@
       "asof": "2026-06-19",
       "previous": 128825.85468094825,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 126452.13709338135
+      "value": 126427.88593896931
     },
     "nasdaq100": {
-      "asof": "2026-06-17",
-      "previous": 29968.130859375,
+      "asof": "2026-06-18",
+      "previous": 29670.94921875,
       "source": "Yahoo (^NDX)",
-      "value": 29670.94921875
+      "value": 30406.189453125
     },
     "nhb_refi_rate": null,
     "nifty": {
       "asof": "2026-06-19",
-      "previous": 24085.69921875,
+      "previous": 24168.0,
       "source": "Yahoo (^NSEI)",
       "value": 24013.099609375
     },
     "nifty_wk_pct": {
       "asof": "2026-06-19",
-      "previous": 3.7508158721136553,
+      "previous": 4.345124721945562,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": 3.6763436652075736
+      "value": 1.6517837026686812
     },
     "sbi_1y_mclr": null,
     "sol": {
       "asof": "2026-06-19",
-      "previous": 71.34158769433525,
+      "previous": 69.10181642993574,
       "source": "CoinGecko (solana)",
-      "value": 68.31
+      "value": 69.32
     },
     "sp500": {
-      "asof": "2026-06-17",
-      "previous": 7511.35009765625,
+      "asof": "2026-06-18",
+      "previous": 7420.10009765625,
       "source": "Yahoo (^GSPC)",
-      "value": 7420.10009765625
+      "value": 7500.580078125
     },
     "tbill_3m_yield": null,
     "us10y": {
@@ -131,26 +131,26 @@
       "asof": "2026-06-19",
       "previous": 160.60000610351562,
       "source": "Yahoo (USDJPY=X)",
-      "value": 161.28199768066406
+      "value": 161.26300048828125
     },
     "vix": {
       "asof": "2026-06-19",
-      "previous": 18.440000534057617,
+      "previous": 16.399999618530273,
       "source": "Yahoo (^VIX)",
-      "value": 17.239999771118164
+      "value": 16.780000686645508
     },
     "wti": {
       "asof": "2026-06-19",
       "previous": 76.5999984741211,
       "source": "Yahoo (CL=F)",
-      "value": 75.97000122070312
+      "value": 76.5
     },
     "xauusd": {
       "asof": "2026-06-19",
       "previous": 4224.10009765625,
       "source": "Yahoo (GC=F)",
-      "value": 4170.39990234375
+      "value": 4169.60009765625
     }
   },
-  "updatedAt": "2026-06-19T10:58:26Z"
+  "updatedAt": "2026-06-19T15:44:19Z"
 }
