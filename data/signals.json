@@ -6,13 +6,13 @@
       "asof": "2026-06-26",
       "previous": 75.26000213623047,
       "source": "Yahoo (BZ=F)",
-      "value": 71.98999786376953
+      "value": 72.5999984741211
     },
     "btc": {
-      "asof": "2026-06-27",
-      "previous": 59795.62381497809,
+      "asof": "2026-06-28",
+      "previous": 60218.82578636831,
       "source": "CoinGecko (bitcoin)",
-      "value": 60124.0
+      "value": 60086.0
     },
     "dow": {
       "asof": "2026-06-26",
@@ -27,10 +27,10 @@
       "value": 101.36000061035156
     },
     "eth": {
-      "asof": "2026-06-27",
-      "previous": 1575.7113934753347,
+      "asof": "2026-06-28",
+      "previous": 1578.714073977047,
       "source": "CoinGecko (ethereum)",
-      "value": 1576.46
+      "value": 1573.33
     },
     "eurusd": {
       "asof": "2026-06-26",
@@ -42,7 +42,7 @@
       "asof": "2026-06-26",
       "previous": -13.834019243767436,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -13.176665568362179
+      "value": -12.802017276987886
     },
     "in10y": null,
     "india_5y_cds": null,
@@ -56,7 +56,7 @@
       "asof": "2026-06-26",
       "previous": 122327.32816703495,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 123658.56506268178
+      "value": 124192.15975145761
     },
     "nasdaq100": {
       "asof": "2026-06-26",
@@ -78,16 +78,16 @@
       "value": -0.4634227077126779
     },
     "sbi_1y_mclr": {
-      "asof": "2026-06-27",
+      "asof": "2026-06-28",
       "previous": null,
       "source": "sbi.co.in (MCLR page)",
       "value": 8.7
     },
     "sol": {
-      "asof": "2026-06-27",
-      "previous": 73.65022742245222,
+      "asof": "2026-06-28",
+      "previous": 71.94408312937237,
       "source": "CoinGecko (solana)",
-      "value": 71.05
+      "value": 70.82
     },
     "sp500": {
       "asof": "2026-06-26",
@@ -107,7 +107,7 @@
       "value": 94.30000305175781
     },
     "usdjpy": {
-      "asof": "2026-06-27",
+      "asof": "2026-06-28",
       "previous": 161.80499267578125,
       "source": "Yahoo (USDJPY=X)",
       "value": 161.68499755859375
@@ -128,8 +128,8 @@
       "asof": "2026-06-26",
       "previous": 4030.5,
       "source": "Yahoo (GC=F)",
-      "value": 4078.699951171875
+      "value": 4096.2998046875
     }
   },
-  "updatedAt": "2026-06-27T19:47:46Z"
+  "updatedAt": "2026-06-28T04:54:13Z"
 }
