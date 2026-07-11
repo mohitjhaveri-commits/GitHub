@@ -6,13 +6,13 @@
       "asof": "2026-07-10",
       "previous": 76.30000305175781,
       "source": "Yahoo (BZ=F)",
-      "value": 76.0
+      "value": 76.01000213623047
     },
     "btc": {
       "asof": "2026-07-11",
-      "previous": 63854.4736982686,
+      "previous": 63949.2915557563,
       "source": "CoinGecko (bitcoin)",
-      "value": 64119.0
+      "value": 64195.0
     },
     "dow": {
       "asof": "2026-07-10",
@@ -24,13 +24,13 @@
       "asof": "2026-07-10",
       "previous": 100.94000244140625,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 100.96499633789062
+      "value": 100.97000122070312
     },
     "eth": {
       "asof": "2026-07-11",
-      "previous": 1773.6857199850447,
+      "previous": 1774.1248761445247,
       "source": "CoinGecko (ethereum)",
-      "value": 1795.88
+      "value": 1800.46
     },
     "eurusd": {
       "asof": "2026-07-10",
@@ -42,7 +42,7 @@
       "asof": "2026-07-10",
       "previous": -8.217043211980185,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -7.163577237914559
+      "value": -7.721189484963463
     },
     "in10y": {
       "asof": "2026-07-11",
@@ -67,7 +67,7 @@
       "asof": "2026-07-10",
       "previous": 126679.87852098129,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 126600.9275569906
+      "value": 125840.51234932536
     },
     "nasdaq100": {
       "asof": "2026-07-10",
@@ -96,9 +96,9 @@
     },
     "sol": {
       "asof": "2026-07-11",
-      "previous": 78.85679485084283,
+      "previous": 78.89820340697743,
       "source": "CoinGecko (solana)",
-      "value": 77.76
+      "value": 77.97
     },
     "sp500": {
       "asof": "2026-07-10",
@@ -159,14 +159,14 @@
       "asof": "2026-07-10",
       "previous": 72.08000183105469,
       "source": "Yahoo (CL=F)",
-      "value": 71.51000213623047
+      "value": 71.41000366210938
     },
     "xauusd": {
       "asof": "2026-07-10",
       "previous": 4130.60009765625,
       "source": "Yahoo (GC=F)",
-      "value": 4128.89990234375
+      "value": 4104.10009765625
     }
   },
-  "updatedAt": "2026-07-11T03:44:25Z"
+  "updatedAt": "2026-07-11T08:15:18Z"
 }
