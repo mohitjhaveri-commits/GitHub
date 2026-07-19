@@ -10,9 +10,9 @@
     },
     "btc": {
       "asof": "2026-07-19",
-      "previous": 64016.80440441668,
+      "previous": 64452.0620683508,
       "source": "CoinGecko (bitcoin)",
-      "value": 64450.0
+      "value": 64378.0
     },
     "dow": {
       "asof": "2026-07-17",
@@ -28,9 +28,9 @@
     },
     "eth": {
       "asof": "2026-07-19",
-      "previous": 1839.5919925504802,
+      "previous": 1855.5193470282002,
       "source": "CoinGecko (ethereum)",
-      "value": 1870.79
+      "value": 1858.46
     },
     "eurusd": {
       "asof": "2026-07-17",
@@ -56,7 +56,7 @@
       "asof": "2026-07-17",
       "previous": 123850.0531908336,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 124400.81141846097
+      "value": 124387.88792574427
     },
     "nasdaq100": {
       "asof": "2026-07-17",
@@ -85,9 +85,9 @@
     },
     "sol": {
       "asof": "2026-07-19",
-      "previous": 74.64989429514752,
+      "previous": 75.23633839147452,
       "source": "CoinGecko (solana)",
-      "value": 76.03
+      "value": 75.76
     },
     "sp500": {
       "asof": "2026-07-17",
@@ -130,7 +130,7 @@
       "asof": "2026-07-19",
       "previous": 96.6521987915039,
       "source": "Yahoo (USDINR=X)",
-      "value": 96.27999877929688
+      "value": 96.2699966430664
     },
     "usdjpy": {
       "asof": "2026-07-17",
@@ -157,5 +157,5 @@
       "value": 4018.800048828125
     }
   },
-  "updatedAt": "2026-07-19T13:55:10Z"
+  "updatedAt": "2026-07-19T19:33:35Z"
 }
