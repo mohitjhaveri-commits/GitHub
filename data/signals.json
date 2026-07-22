@@ -6,43 +6,43 @@
       "asof": "2026-07-22",
       "previous": 91.01000213623047,
       "source": "Yahoo (BZ=F)",
-      "value": 93.83999633789062
+      "value": 94.05999755859375
     },
     "btc": {
       "asof": "2026-07-22",
-      "previous": 66215.06368056255,
+      "previous": 66686.14083340325,
       "source": "CoinGecko (bitcoin)",
-      "value": 65897.0
+      "value": 65681.0
     },
     "dow": {
-      "asof": "2026-07-21",
-      "previous": 51839.26171875,
+      "asof": "2026-07-22",
+      "previous": 52224.640625,
       "source": "Yahoo (^DJI)",
-      "value": 52224.640625
+      "value": 52355.05859375
     },
     "dxy": {
       "asof": "2026-07-22",
       "previous": 101.18000030517578,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 101.11000061035156
+      "value": 101.06700134277344
     },
     "eth": {
       "asof": "2026-07-22",
-      "previous": 1939.3458329807656,
+      "previous": 1932.3060001301633,
       "source": "CoinGecko (ethereum)",
-      "value": 1918.09
+      "value": 1930.72
     },
     "eurusd": {
       "asof": "2026-07-22",
       "previous": 1.1418131589889526,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.141422152519226
+      "value": 1.1418131589889526
     },
     "gold_30d_pct": {
       "asof": "2026-07-22",
       "previous": -6.133130294681123,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -4.9193895037152915
+      "value": -3.989944507401697
     },
     "in10y": null,
     "india_5y_cds": null,
@@ -50,32 +50,32 @@
       "asof": "2026-07-22",
       "previous": 12.600000381469727,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 13.354999542236328
+      "value": 13.292499542236328
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-07-22",
       "previous": 126294.09057004671,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 127932.86280371436
+      "value": 129189.09405668777
     },
     "nasdaq100": {
-      "asof": "2026-07-21",
-      "previous": 28604.23046875,
+      "asof": "2026-07-22",
+      "previous": 29155.1796875,
       "source": "Yahoo (^NDX)",
-      "value": 29155.1796875
+      "value": 29064.052734375
     },
     "nhb_refi_rate": null,
     "nifty": {
       "asof": "2026-07-22",
       "previous": 24187.69921875,
       "source": "Yahoo (^NSEI)",
-      "value": 23973.5
+      "value": 23996.25
     },
     "nifty_wk_pct": {
       "asof": "2026-07-22",
       "previous": 0.5639786758048341,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -0.43005495047448966
+      "value": -0.34159104595385925
     },
     "sbi_1y_mclr": {
       "asof": "2026-07-22",
@@ -85,15 +85,15 @@
     },
     "sol": {
       "asof": "2026-07-22",
-      "previous": 78.40205948181938,
+      "previous": 78.11734616752874,
       "source": "CoinGecko (solana)",
-      "value": 77.3
+      "value": 77.78
     },
     "sp500": {
-      "asof": "2026-07-21",
-      "previous": 7443.27978515625,
+      "asof": "2026-07-22",
+      "previous": 7509.2001953125,
       "source": "Yahoo (^GSPC)",
-      "value": 7509.2001953125
+      "value": 7501.77001953125
     },
     "tbill_3m_yield": null,
     "us10y": {
@@ -121,8 +121,8 @@
       "value": 5.11
     },
     "us_ig_oas": {
-      "asof": "2026-07-20",
-      "previous": 0.79,
+      "asof": "2026-07-21",
+      "previous": 0.78,
       "source": "FRED (BAMLC0A0CM)",
       "value": 0.78
     },
@@ -130,32 +130,32 @@
       "asof": "2026-07-22",
       "previous": 96.4896011352539,
       "source": "Yahoo (USDINR=X)",
-      "value": 96.52999877929688
+      "value": 96.55500030517578
     },
     "usdjpy": {
       "asof": "2026-07-22",
       "previous": 162.48699951171875,
       "source": "Yahoo (USDJPY=X)",
-      "value": 163.0050048828125
+      "value": 163.06700134277344
     },
     "vix": {
       "asof": "2026-07-22",
       "previous": 17.049999237060547,
       "source": "Yahoo (^VIX)",
-      "value": 17.440000534057617
+      "value": 16.84000015258789
     },
     "wti": {
       "asof": "2026-07-22",
       "previous": 84.91000366210938,
       "source": "Yahoo (CL=F)",
-      "value": 87.26000213623047
+      "value": 87.04000091552734
     },
     "xauusd": {
       "asof": "2026-07-22",
       "previous": 4071.10009765625,
       "source": "Yahoo (GC=F)",
-      "value": 4122.2001953125
+      "value": 4161.60009765625
     }
   },
-  "updatedAt": "2026-07-22T08:45:57Z"
+  "updatedAt": "2026-07-22T14:23:53Z"
 }
