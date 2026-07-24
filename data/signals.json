@@ -6,31 +6,31 @@
       "asof": "2026-07-24",
       "previous": 100.69000244140625,
       "source": "Yahoo (BZ=F)",
-      "value": 97.37000274658203
+      "value": 96.38999938964844
     },
     "btc": {
       "asof": "2026-07-24",
-      "previous": 65013.65492408814,
+      "previous": 64696.3852866997,
       "source": "CoinGecko (bitcoin)",
-      "value": 64080.0
+      "value": 64193.0
     },
     "dow": {
       "asof": "2026-07-24",
       "previous": 51711.6484375,
       "source": "Yahoo (^DJI)",
-      "value": 51869.890625
+      "value": 51910.41015625
     },
     "dxy": {
       "asof": "2026-07-24",
       "previous": 101.43000030517578,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 101.43199920654297
+      "value": 101.45899963378906
     },
     "eth": {
       "asof": "2026-07-24",
-      "previous": 1902.276259361543,
+      "previous": 1873.9984979913054,
       "source": "CoinGecko (ethereum)",
-      "value": 1858.11
+      "value": 1861.99
     },
     "eurusd": {
       "asof": "2026-07-24",
@@ -42,40 +42,40 @@
       "asof": "2026-07-24",
       "previous": -5.009387378961268,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -1.007744134076353
+      "value": -1.2219510473169968
     },
     "in10y": null,
     "india_5y_cds": null,
     "indiavix": {
-      "asof": "2026-07-24",
-      "previous": 13.479999542236328,
+      "asof": "2026-07-23",
+      "previous": 13.289999961853027,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 14.029999732971191
+      "value": 13.479999542236328
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-07-24",
       "previous": 125621.86370312143,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 126239.17617898958
+      "value": 125981.52468296367
     },
     "nasdaq100": {
       "asof": "2026-07-24",
       "previous": 28454.810546875,
       "source": "Yahoo (^NDX)",
-      "value": 28272.5703125
+      "value": 28097.609375
     },
     "nhb_refi_rate": null,
     "nifty": {
-      "asof": "2026-07-24",
-      "previous": 23869.599609375,
+      "asof": "2026-07-23",
+      "previous": 23996.25,
       "source": "Yahoo (^NSEI)",
-      "value": 23767.44921875
+      "value": 23869.599609375
     },
     "nifty_wk_pct": {
-      "asof": "2026-07-24",
-      "previous": -0.8439018833535844,
+      "asof": "2026-07-23",
+      "previous": -0.34159104595385925,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -2.3294343552158643
+      "value": -0.8439018833535844
     },
     "sbi_1y_mclr": {
       "asof": "2026-07-24",
@@ -85,15 +85,15 @@
     },
     "sol": {
       "asof": "2026-07-24",
-      "previous": 76.81367025734536,
+      "previous": 75.53930976726843,
       "source": "CoinGecko (solana)",
-      "value": 74.12
+      "value": 73.9
     },
     "sp500": {
       "asof": "2026-07-24",
       "previous": 7408.2998046875,
       "source": "Yahoo (^GSPC)",
-      "value": 7420.41015625
+      "value": 7402.2900390625
     },
     "tbill_3m_yield": null,
     "us10y": {
@@ -121,10 +121,10 @@
       "value": 5.15
     },
     "us_ig_oas": {
-      "asof": "2026-07-22",
+      "asof": "2026-07-23",
       "previous": 0.78,
       "source": "FRED (BAMLC0A0CM)",
-      "value": 0.78
+      "value": 0.79
     },
     "usdinr": {
       "asof": "2026-07-24",
@@ -136,26 +136,26 @@
       "asof": "2026-07-24",
       "previous": 163.08099365234375,
       "source": "Yahoo (USDJPY=X)",
-      "value": 163.81199645996094
+      "value": 163.83299255371094
     },
     "vix": {
       "asof": "2026-07-24",
       "previous": 18.700000762939453,
       "source": "Yahoo (^VIX)",
-      "value": 18.93000030517578
+      "value": 18.829999923706055
     },
     "wti": {
       "asof": "2026-07-24",
       "previous": 92.19000244140625,
       "source": "Yahoo (CL=F)",
-      "value": 89.79000091552734
+      "value": 89.05999755859375
     },
     "xauusd": {
       "asof": "2026-07-24",
       "previous": 4046.60009765625,
       "source": "Yahoo (GC=F)",
-      "value": 4066.699951171875
+      "value": 4058.39990234375
     }
   },
-  "updatedAt": "2026-07-24T14:14:35Z"
+  "updatedAt": "2026-07-24T19:48:18Z"
 }
