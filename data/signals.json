@@ -6,43 +6,43 @@
       "asof": "2026-08-07",
       "previous": 82.48999786376953,
       "source": "Yahoo (BZ=F)",
-      "value": 83.19999694824219
+      "value": 81.94999694824219
     },
     "btc": {
       "asof": "2026-08-07",
-      "previous": 64763.87438013165,
+      "previous": 64235.020571177505,
       "source": "CoinGecko (bitcoin)",
-      "value": 64333.0
+      "value": 65133.0
     },
     "dow": {
-      "asof": "2026-08-06",
-      "previous": 54349.12109375,
+      "asof": "2026-08-07",
+      "previous": 53885.1015625,
       "source": "Yahoo (^DJI)",
-      "value": 53885.1015625
+      "value": 53964.23828125
     },
     "dxy": {
       "asof": "2026-08-07",
       "previous": 99.97000122070312,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 99.9520034790039
+      "value": 99.49099731445312
     },
     "eth": {
       "asof": "2026-08-07",
-      "previous": 1907.4462710864148,
+      "previous": 1900.0207101298465,
       "source": "CoinGecko (ethereum)",
-      "value": 1901.89
+      "value": 1926.78
     },
     "eurusd": {
       "asof": "2026-08-07",
       "previous": 1.1557353734970093,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1524720191955566
+      "value": 1.157273530960083
     },
     "gold_30d_pct": {
       "asof": "2026-08-07",
       "previous": 6.307795105428086,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": 7.820374527043791
+      "value": 9.547197734462227
     },
     "in10y": null,
     "india_5y_cds": null,
@@ -50,32 +50,32 @@
       "asof": "2026-08-07",
       "previous": 12.15999984741211,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 12.407500267028809
+      "value": 12.157500267028809
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-08-07",
       "previous": 129669.62269510089,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 133107.04730561058
+      "value": 135175.1276782431
     },
     "nasdaq100": {
-      "asof": "2026-08-06",
-      "previous": 29487.7890625,
+      "asof": "2026-08-07",
+      "previous": 29373.330078125,
       "source": "Yahoo (^NDX)",
-      "value": 29373.330078125
+      "value": 29627.111328125
     },
     "nhb_refi_rate": null,
     "nifty": {
       "asof": "2026-08-07",
       "previous": 24636.0,
       "source": "Yahoo (^NSEI)",
-      "value": 24560.30078125
+      "value": 24570.650390625
     },
     "nifty_wk_pct": {
       "asof": "2026-08-07",
       "previous": 1.3112128857743388,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": 0.7252809765913516
+      "value": 0.7671171781301838
     },
     "sbi_1y_mclr": {
       "asof": "2026-08-07",
@@ -85,15 +85,15 @@
     },
     "sol": {
       "asof": "2026-08-07",
-      "previous": 73.88775916963131,
+      "previous": 73.02764984267328,
       "source": "CoinGecko (solana)",
-      "value": 72.89
+      "value": 74.03
     },
     "sp500": {
-      "asof": "2026-08-06",
-      "previous": 7723.5498046875,
+      "asof": "2026-08-07",
+      "previous": 7709.9599609375,
       "source": "Yahoo (^GSPC)",
-      "value": 7709.9599609375
+      "value": 7736.10986328125
     },
     "tbill_3m_yield": null,
     "us10y": {
@@ -130,13 +130,13 @@
       "asof": "2026-08-07",
       "previous": 95.07730102539062,
       "source": "Yahoo (USDINR=X)",
-      "value": 95.26000213623047
+      "value": 95.197998046875
     },
     "usdjpy": {
       "asof": "2026-08-07",
       "previous": 157.60000610351562,
       "source": "Yahoo (USDJPY=X)",
-      "value": 158.38800048828125
+      "value": 157.50900268554688
     },
     "vix": {
       "asof": "2026-08-07",
@@ -148,14 +148,14 @@
       "asof": "2026-08-07",
       "previous": 77.29000091552734,
       "source": "Yahoo (CL=F)",
-      "value": 77.66000366210938
+      "value": 76.94000244140625
     },
     "xauusd": {
       "asof": "2026-08-07",
       "previous": 4242.0,
       "source": "Yahoo (GC=F)",
-      "value": 4346.10009765625
+      "value": 4416.5
     }
   },
-  "updatedAt": "2026-08-07T07:43:02Z"
+  "updatedAt": "2026-08-07T13:40:40Z"
 }
