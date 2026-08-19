@@ -6,43 +6,43 @@
       "asof": "2026-08-19",
       "previous": 91.0199966430664,
       "source": "Yahoo (BZ=F)",
-      "value": 91.61000061035156
+      "value": 90.9800033569336
     },
     "btc": {
       "asof": "2026-08-19",
-      "previous": 64251.44646399617,
+      "previous": 64124.8038406738,
       "source": "CoinGecko (bitcoin)",
-      "value": 64244.0
+      "value": 64782.0
     },
     "dow": {
-      "asof": "2026-08-17",
-      "previous": 53732.41015625,
+      "asof": "2026-08-18",
+      "previous": 53459.78125,
       "source": "Yahoo (^DJI)",
-      "value": 53459.78125
+      "value": 53343.3984375
     },
     "dxy": {
       "asof": "2026-08-19",
-      "previous": 99.63999938964844,
+      "previous": 99.6500015258789,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 99.47799682617188
+      "value": 99.13099670410156
     },
     "eth": {
       "asof": "2026-08-19",
-      "previous": 1900.6994810774609,
+      "previous": 1895.9686247260058,
       "source": "CoinGecko (ethereum)",
-      "value": 1914.36
+      "value": 1933.94
     },
     "eurusd": {
       "asof": "2026-08-19",
       "previous": 1.1582788228988647,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1598236560821533
+      "value": 1.164958119392395
     },
     "gold_30d_pct": {
       "asof": "2026-08-19",
       "previous": 5.324106957545808,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": 8.128421486198668
+      "value": 10.417846368860156
     },
     "in10y": null,
     "india_5y_cds": null,
@@ -50,32 +50,32 @@
       "asof": "2026-08-19",
       "previous": 11.390000343322754,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 11.555000305175781
+      "value": 11.322500228881836
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-08-19",
       "previous": 134325.85982127182,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 135488.2536812852
+      "value": 138260.72665548266
     },
     "nasdaq100": {
-      "asof": "2026-08-17",
-      "previous": 30046.140625,
+      "asof": "2026-08-18",
+      "previous": 29995.380859375,
       "source": "Yahoo (^NDX)",
-      "value": 29995.380859375
+      "value": 29490.9609375
     },
     "nhb_refi_rate": null,
     "nifty": {
       "asof": "2026-08-19",
       "previous": 24154.900390625,
       "source": "Yahoo (^NSEI)",
-      "value": 24057.599609375
+      "value": 24078.30078125
     },
     "nifty_wk_pct": {
       "asof": "2026-08-19",
       "previous": -1.2945518220584844,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -1.5393240267964574
+      "value": -1.4636158976201015
     },
     "sbi_1y_mclr": {
       "asof": "2026-08-19",
@@ -85,9 +85,9 @@
     },
     "sol": {
       "asof": "2026-08-19",
-      "previous": 75.9600084269819,
+      "previous": 76.10293610885161,
       "source": "CoinGecko (solana)",
-      "value": 76.93
+      "value": 78.21
     },
     "sp500": {
       "asof": "2026-08-18",
@@ -130,32 +130,32 @@
       "asof": "2026-08-19",
       "previous": 95.69409942626953,
       "source": "Yahoo (USDINR=X)",
-      "value": 95.73500061035156
+      "value": 95.74299621582031
     },
     "usdjpy": {
       "asof": "2026-08-19",
       "previous": 159.33999633789062,
       "source": "Yahoo (USDJPY=X)",
-      "value": 159.17100524902344
+      "value": 158.41000366210938
     },
     "vix": {
-      "asof": "2026-08-18",
-      "previous": 15.1899995803833,
+      "asof": "2026-08-19",
+      "previous": 15.84000015258789,
       "source": "Yahoo (^VIX)",
-      "value": 15.84000015258789
+      "value": 15.420000076293945
     },
     "wti": {
       "asof": "2026-08-19",
       "previous": 84.94000244140625,
       "source": "Yahoo (CL=F)",
-      "value": 84.66000366210938
+      "value": 83.98999786376953
     },
     "xauusd": {
       "asof": "2026-08-19",
       "previous": 4366.0,
       "source": "Yahoo (GC=F)",
-      "value": 4401.89990234375
+      "value": 4491.60009765625
     }
   },
-  "updatedAt": "2026-08-19T07:06:56Z"
+  "updatedAt": "2026-08-19T13:10:34Z"
 }
