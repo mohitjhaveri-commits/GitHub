@@ -4,15 +4,15 @@
     "aaa_5y_corp_bond_yield": null,
     "brent": {
       "asof": "2026-08-20",
-      "previous": 91.0199966430664,
+      "previous": 91.62000274658203,
       "source": "Yahoo (BZ=F)",
-      "value": 92.04000091552734
+      "value": 92.1500015258789
     },
     "btc": {
       "asof": "2026-08-20",
-      "previous": 64364.82953950277,
+      "previous": 64242.89846624934,
       "source": "CoinGecko (bitcoin)",
-      "value": 69817.0
+      "value": 69788.0
     },
     "dow": {
       "asof": "2026-08-19",
@@ -24,58 +24,58 @@
       "asof": "2026-08-20",
       "previous": 98.83000183105469,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 98.80599975585938
+      "value": 98.76499938964844
     },
     "eth": {
       "asof": "2026-08-20",
-      "previous": 1912.6068018109042,
+      "previous": 1914.4911925228935,
       "source": "CoinGecko (ethereum)",
-      "value": 2268.28
+      "value": 2259.8
     },
     "eurusd": {
       "asof": "2026-08-20",
       "previous": 1.1579434871673584,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1678149700164795
+      "value": 1.168770432472229
     },
     "gold_30d_pct": {
       "asof": "2026-08-20",
-      "previous": 5.324106957545808,
+      "previous": 10.280282248135256,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": 11.845051631824246
+      "value": 10.131699755622959
     },
     "in10y": null,
     "india_5y_cds": null,
     "indiavix": {
-      "asof": "2026-08-19",
-      "previous": 11.390000343322754,
+      "asof": "2026-08-20",
+      "previous": 11.319999694824219,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 11.319999694824219
+      "value": 10.640000343322754
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-08-20",
-      "previous": 134325.85982127182,
+      "previous": 138298.9472600434,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 140258.19053148897
+      "value": 139865.5806518536
     },
     "nasdaq100": {
       "asof": "2026-08-19",
       "previous": 29490.9609375,
       "source": "Yahoo (^NDX)",
-      "value": 29426.0234375
+      "value": 29426.01953125
     },
     "nhb_refi_rate": null,
     "nifty": {
-      "asof": "2026-08-19",
-      "previous": 24154.900390625,
+      "asof": "2026-08-20",
+      "previous": 24078.30078125,
       "source": "Yahoo (^NSEI)",
-      "value": 24078.30078125
+      "value": 24210.0
     },
     "nifty_wk_pct": {
-      "asof": "2026-08-19",
-      "previous": -1.2945518220584844,
+      "asof": "2026-08-20",
+      "previous": -1.4636158976201015,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -1.4636158976201015
+      "value": -0.7575010958174798
     },
     "sbi_1y_mclr": {
       "asof": "2026-08-20",
@@ -85,9 +85,9 @@
     },
     "sol": {
       "asof": "2026-08-20",
-      "previous": 76.71457354836885,
+      "previous": 76.93550365672075,
       "source": "CoinGecko (solana)",
-      "value": 85.31
+      "value": 85.81
     },
     "sp500": {
       "asof": "2026-08-19",
@@ -127,16 +127,16 @@
       "value": 0.82
     },
     "usdinr": {
-      "asof": "2026-08-18",
-      "previous": 95.69409942626953,
+      "asof": "2026-08-20",
+      "previous": 95.81639862060547,
       "source": "Yahoo (USDINR=X)",
-      "value": 95.81639862060547
+      "value": 95.62799835205078
     },
     "usdjpy": {
       "asof": "2026-08-20",
       "previous": 159.5500030517578,
       "source": "Yahoo (USDJPY=X)",
-      "value": 158.5240020751953
+      "value": 158.39500427246094
     },
     "vix": {
       "asof": "2026-08-19",
@@ -146,16 +146,16 @@
     },
     "wti": {
       "asof": "2026-08-20",
-      "previous": 84.94000244140625,
+      "previous": 85.83000183105469,
       "source": "Yahoo (CL=F)",
-      "value": 84.68000030517578
+      "value": 84.86000061035156
     },
     "xauusd": {
       "asof": "2026-08-20",
-      "previous": 4366.0,
+      "previous": 4489.39990234375,
       "source": "Yahoo (GC=F)",
-      "value": 4553.0
+      "value": 4549.2001953125
     }
   },
-  "updatedAt": "2026-08-20T01:52:40Z"
+  "updatedAt": "2026-08-20T07:07:21Z"
 }
