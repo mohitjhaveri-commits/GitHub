@@ -6,13 +6,13 @@
       "asof": "2026-08-24",
       "previous": 94.38999938964844,
       "source": "Yahoo (BZ=F)",
-      "value": 92.58999633789062
+      "value": 92.7300033569336
     },
     "btc": {
       "asof": "2026-08-24",
-      "previous": 77163.4207036825,
+      "previous": 76234.19034756078,
       "source": "CoinGecko (bitcoin)",
-      "value": 77057.0
+      "value": 77585.0
     },
     "dow": {
       "asof": "2026-08-21",
@@ -24,39 +24,50 @@
       "asof": "2026-08-24",
       "previous": 98.80000305175781,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 98.83999633789062
+      "value": 98.9280014038086
     },
     "eth": {
       "asof": "2026-08-24",
-      "previous": 2421.20395216534,
+      "previous": 2392.9358902889317,
       "source": "CoinGecko (ethereum)",
-      "value": 2433.34
+      "value": 2460.96
     },
     "eurusd": {
       "asof": "2026-08-24",
       "previous": 1.1687841415405273,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1684973239898682
+      "value": 1.1676785945892334
     },
     "gold_30d_pct": {
       "asof": "2026-08-24",
       "previous": 12.670256271209348,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": 16.887665749311985
+      "value": 17.60320484504003
     },
-    "in10y": null,
+    "in10y": {
+      "asof": "2026-08-24",
+      "previous": null,
+      "source": "economictimes.indiatimes.com (median plausible)",
+      "value": 7.25
+    },
+    "ind_us_10y_spread": {
+      "asof": "2026-08-24",
+      "previous": null,
+      "source": "derived (in10y - us10y)",
+      "value": 2.5599999999999996
+    },
     "india_5y_cds": null,
     "indiavix": {
-      "asof": "2026-08-21",
-      "previous": 10.760000228881836,
+      "asof": "2026-08-24",
+      "previous": 11.199999809265137,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 11.199999809265137
+      "value": 11.467499732971191
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-08-24",
       "previous": 142382.76929767302,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 143706.881466526
+      "value": 144690.20113071334
     },
     "nasdaq100": {
       "asof": "2026-08-21",
@@ -66,16 +77,16 @@
     },
     "nhb_refi_rate": null,
     "nifty": {
-      "asof": "2026-08-21",
-      "previous": 24231.849609375,
+      "asof": "2026-08-24",
+      "previous": 24252.0,
       "source": "Yahoo (^NSEI)",
-      "value": 24252.0
+      "value": 24179.05078125
     },
     "nifty_wk_pct": {
-      "asof": "2026-08-21",
-      "previous": -0.672245495139374,
+      "asof": "2026-08-24",
+      "previous": -0.46786505786752036,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -0.46786505786752036
+      "value": -0.43417609434836074
     },
     "sbi_1y_mclr": {
       "asof": "2026-08-24",
@@ -85,9 +96,9 @@
     },
     "sol": {
       "asof": "2026-08-24",
-      "previous": 95.87466560872949,
+      "previous": 92.69145628031116,
       "source": "CoinGecko (solana)",
-      "value": 94.04
+      "value": 94.57
     },
     "sp500": {
       "asof": "2026-08-21",
@@ -127,16 +138,16 @@
       "value": 0.82
     },
     "usdinr": {
-      "asof": "2026-08-23",
+      "asof": "2026-08-24",
       "previous": 95.77220153808594,
       "source": "Yahoo (USDINR=X)",
-      "value": 95.68000030517578
+      "value": 95.72000122070312
     },
     "usdjpy": {
       "asof": "2026-08-24",
       "previous": 158.88299560546875,
       "source": "Yahoo (USDJPY=X)",
-      "value": 158.8350067138672
+      "value": 159.1300048828125
     },
     "vix": {
       "asof": "2026-08-21",
@@ -148,14 +159,14 @@
       "asof": "2026-08-24",
       "previous": 87.05999755859375,
       "source": "Yahoo (CL=F)",
-      "value": 85.2699966430664
+      "value": 85.22000122070312
     },
     "xauusd": {
       "asof": "2026-08-24",
       "previous": 4624.10009765625,
       "source": "Yahoo (GC=F)",
-      "value": 4671.60009765625
+      "value": 4701.60009765625
     }
   },
-  "updatedAt": "2026-08-24T01:58:47Z"
+  "updatedAt": "2026-08-24T07:29:54Z"
 }
