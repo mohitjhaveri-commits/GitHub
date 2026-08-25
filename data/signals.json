@@ -4,15 +4,15 @@
     "aaa_5y_corp_bond_yield": null,
     "brent": {
       "asof": "2026-08-25",
-      "previous": 94.38999938964844,
+      "previous": 92.16999816894531,
       "source": "Yahoo (BZ=F)",
-      "value": 92.25
+      "value": 91.3499984741211
     },
     "btc": {
       "asof": "2026-08-25",
-      "previous": 77133.39355585777,
+      "previous": 77504.90367194272,
       "source": "CoinGecko (bitcoin)",
-      "value": 79672.0
+      "value": 80732.0
     },
     "dow": {
       "asof": "2026-08-24",
@@ -24,25 +24,25 @@
       "asof": "2026-08-25",
       "previous": 99.0,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 98.99099731445312
+      "value": 99.10700225830078
     },
     "eth": {
       "asof": "2026-08-25",
-      "previous": 2435.0868004317017,
+      "previous": 2459.5686924297524,
       "source": "CoinGecko (ethereum)",
-      "value": 2493.67
+      "value": 2508.56
     },
     "eurusd": {
       "asof": "2026-08-25",
       "previous": 1.1681560277938843,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1667250394821167
+      "value": 1.16604483127594
     },
     "gold_30d_pct": {
       "asof": "2026-08-25",
-      "previous": 12.670256271209348,
+      "previous": 16.107075423755315,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": 18.313735301476108
+      "value": 15.586909575691527
     },
     "in10y": {
       "asof": "2026-08-25",
@@ -58,35 +58,35 @@
     },
     "india_5y_cds": null,
     "indiavix": {
-      "asof": "2026-08-24",
-      "previous": 11.199999809265137,
+      "asof": "2026-08-25",
+      "previous": 11.529999732971191,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 11.529999732971191
+      "value": 11.225000381469727
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-08-25",
-      "previous": 142275.87776212627,
+      "previous": 142789.70000344102,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 145556.22932671645
+      "value": 144421.65910996808
     },
     "nasdaq100": {
       "asof": "2026-08-24",
       "previous": 29308.859375,
       "source": "Yahoo (^NDX)",
-      "value": 29023.181640625
+      "value": 29023.1796875
     },
     "nhb_refi_rate": null,
     "nifty": {
-      "asof": "2026-08-24",
-      "previous": 24252.0,
+      "asof": "2026-08-25",
+      "previous": 24219.05078125,
       "source": "Yahoo (^NSEI)",
-      "value": 24219.05078125
+      "value": 24159.80078125
     },
     "nifty_wk_pct": {
-      "asof": "2026-08-24",
-      "previous": -0.46786505786752036,
+      "asof": "2026-08-25",
+      "previous": -0.2824464625918667,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -0.2824464625918667
+      "value": 0.020901879301309604
     },
     "sbi_1y_mclr": {
       "asof": "2026-08-25",
@@ -96,9 +96,9 @@
     },
     "sol": {
       "asof": "2026-08-25",
-      "previous": 94.09936122622022,
+      "previous": 94.88117966286634,
       "source": "CoinGecko (solana)",
-      "value": 101.08
+      "value": 101.47
     },
     "sp500": {
       "asof": "2026-08-24",
@@ -141,13 +141,13 @@
       "asof": "2026-08-25",
       "previous": 95.70030212402344,
       "source": "Yahoo (USDINR=X)",
-      "value": 95.73500061035156
+      "value": 95.69499969482422
     },
     "usdjpy": {
       "asof": "2026-08-25",
       "previous": 158.9040069580078,
       "source": "Yahoo (USDJPY=X)",
-      "value": 159.23599243164062
+      "value": 159.35800170898438
     },
     "vix": {
       "asof": "2026-08-24",
@@ -157,16 +157,16 @@
     },
     "wti": {
       "asof": "2026-08-25",
-      "previous": 87.05999755859375,
+      "previous": 85.01000213623047,
       "source": "Yahoo (CL=F)",
-      "value": 85.31999969482422
+      "value": 84.2300033569336
     },
     "xauusd": {
       "asof": "2026-08-25",
-      "previous": 4624.10009765625,
+      "previous": 4640.7998046875,
       "source": "Yahoo (GC=F)",
-      "value": 4729.0
+      "value": 4694.10009765625
     }
   },
-  "updatedAt": "2026-08-25T01:53:25Z"
+  "updatedAt": "2026-08-25T07:09:33Z"
 }
