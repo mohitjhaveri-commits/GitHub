@@ -6,13 +6,13 @@
       "asof": "2026-09-04",
       "previous": 95.5199966430664,
       "source": "Yahoo (BZ=F)",
-      "value": 95.83000183105469
+      "value": 96.27999877929688
     },
     "btc": {
-      "asof": "2026-09-04",
-      "previous": 81447.55425822236,
+      "asof": "2026-09-05",
+      "previous": 81190.78185750265,
       "source": "CoinGecko (bitcoin)",
-      "value": 79717.0
+      "value": 79562.0
     },
     "dow": {
       "asof": "2026-09-04",
@@ -24,65 +24,70 @@
       "asof": "2026-09-04",
       "previous": 99.0,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 99.16200256347656
+      "value": 99.16000366210938
     },
     "eth": {
-      "asof": "2026-09-04",
-      "previous": 2504.838307738388,
+      "asof": "2026-09-05",
+      "previous": 2518.4373215083683,
       "source": "CoinGecko (ethereum)",
-      "value": 2453.85
+      "value": 2452.35
     },
     "eurusd": {
       "asof": "2026-09-04",
       "previous": 1.1628313064575195,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1615750789642334
+      "value": 1.1621150970458984
     },
     "gold_30d_pct": {
       "asof": "2026-09-04",
       "previous": 10.999359633141102,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": 10.079653607940513
+      "value": 8.904506301884233
     },
     "in10y": null,
     "india_5y_cds": null,
     "indiavix": {
-      "asof": "2026-09-03",
-      "previous": 11.59000015258789,
+      "asof": "2026-09-04",
+      "previous": 11.34000015258789,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 11.34000015258789
+      "value": 10.680000305175781
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-09-04",
       "previous": 136461.41971047953,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 136011.59749146196
+      "value": 134573.84991459115
     },
     "nasdaq100": {
       "asof": "2026-09-04",
       "previous": 29482.3203125,
       "source": "Yahoo (^NDX)",
-      "value": 29544.154296875
+      "value": 29544.150390625
     },
     "nhb_refi_rate": null,
     "nifty": {
-      "asof": "2026-09-03",
-      "previous": 23914.44921875,
+      "asof": "2026-09-04",
+      "previous": 23873.44921875,
       "source": "Yahoo (^NSEI)",
-      "value": 23873.44921875
+      "value": 23897.69921875
     },
     "nifty_wk_pct": {
-      "asof": "2026-09-03",
-      "previous": -1.2115986874038274,
-      "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -0.9024189439146979
-    },
-    "sbi_1y_mclr": null,
-    "sol": {
       "asof": "2026-09-04",
-      "previous": 105.00588764397585,
+      "previous": -0.9024189439146979,
+      "source": "Yahoo (^NSEI, 5d % change)",
+      "value": -1.1497153846284351
+    },
+    "sbi_1y_mclr": {
+      "asof": "2026-09-05",
+      "previous": null,
+      "source": "sbi.co.in (MCLR page)",
+      "value": 8.7
+    },
+    "sol": {
+      "asof": "2026-09-05",
+      "previous": 104.2275837182235,
       "source": "CoinGecko (solana)",
-      "value": 101.81
+      "value": 101.91
     },
     "sp500": {
       "asof": "2026-09-04",
@@ -122,16 +127,16 @@
       "value": 0.81
     },
     "usdinr": {
-      "asof": "2026-09-04",
+      "asof": "2026-09-05",
       "previous": 94.49490356445312,
       "source": "Yahoo (USDINR=X)",
-      "value": 94.4800033569336
+      "value": 94.48999786376953
     },
     "usdjpy": {
       "asof": "2026-09-04",
       "previous": 155.66000366210938,
       "source": "Yahoo (USDJPY=X)",
-      "value": 156.2239990234375
+      "value": 156.2209930419922
     },
     "vix": {
       "asof": "2026-09-04",
@@ -143,14 +148,14 @@
       "asof": "2026-09-04",
       "previous": 91.30000305175781,
       "source": "Yahoo (CL=F)",
-      "value": 91.16999816894531
+      "value": 91.4800033569336
     },
     "xauusd": {
       "asof": "2026-09-04",
       "previous": 4491.7001953125,
       "source": "Yahoo (GC=F)",
-      "value": 4477.60009765625
+      "value": 4429.7998046875
     }
   },
-  "updatedAt": "2026-09-04T20:47:28Z"
+  "updatedAt": "2026-09-05T04:33:27Z"
 }
