@@ -10,9 +10,9 @@
     },
     "btc": {
       "asof": "2026-09-07",
-      "previous": 79915.50373281336,
+      "previous": 79984.1940970582,
       "source": "CoinGecko (bitcoin)",
-      "value": 79611.0
+      "value": 79492.0
     },
     "dow": {
       "asof": "2026-09-04",
@@ -24,19 +24,19 @@
       "asof": "2026-09-07",
       "previous": 99.16000366210938,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 99.18000030517578
+      "value": 98.93499755859375
     },
     "eth": {
       "asof": "2026-09-07",
-      "previous": 2503.596495046797,
+      "previous": 2503.5476491182703,
       "source": "CoinGecko (ethereum)",
-      "value": 2495.13
+      "value": 2493.2
     },
     "eurusd": {
       "asof": "2026-09-07",
       "previous": 1.1628313064575195,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.16130530834198
+      "value": 1.163061261177063
     },
     "gold_30d_pct": {
       "asof": "2026-09-07",
@@ -50,13 +50,13 @@
       "asof": "2026-09-07",
       "previous": 10.680000305175781,
       "source": "Yahoo (^INDIAVIX)",
-      "value": 11.172499656677246
+      "value": 11.15999984741211
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-09-07",
       "previous": 134580.8366755441,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 135880.4737773967
+      "value": 135988.41383103208
     },
     "nasdaq100": {
       "asof": "2026-09-04",
@@ -69,13 +69,13 @@
       "asof": "2026-09-07",
       "previous": 23897.69921875,
       "source": "Yahoo (^NSEI)",
-      "value": 23809.44921875
+      "value": 23779.150390625
     },
     "nifty_wk_pct": {
       "asof": "2026-09-07",
       "previous": -1.1497153846284351,
       "source": "Yahoo (^NSEI, 5d % change)",
-      "value": -1.1295493247109596
+      "value": -1.2510174046660905
     },
     "sbi_1y_mclr": {
       "asof": "2026-09-07",
@@ -85,9 +85,9 @@
     },
     "sol": {
       "asof": "2026-09-07",
-      "previous": 105.95118452449692,
+      "previous": 106.8364437046663,
       "source": "CoinGecko (solana)",
-      "value": 105.0
+      "value": 105.27
     },
     "sp500": {
       "asof": "2026-09-04",
@@ -130,19 +130,19 @@
       "asof": "2026-09-07",
       "previous": 94.49490356445312,
       "source": "Yahoo (USDINR=X)",
-      "value": 94.41000366210938
+      "value": 94.48500061035156
     },
     "usdjpy": {
       "asof": "2026-09-07",
       "previous": 155.66000366210938,
       "source": "Yahoo (USDJPY=X)",
-      "value": 156.0919952392578
+      "value": 154.39999389648438
     },
     "vix": {
-      "asof": "2026-09-04",
-      "previous": 14.319999694824219,
+      "asof": "2026-09-07",
+      "previous": 14.529999732971191,
       "source": "Yahoo (^VIX)",
-      "value": 14.529999732971191
+      "value": 15.270000457763672
     },
     "wti": {
       "asof": "2026-09-07",
@@ -157,5 +157,5 @@
       "value": 4476.60009765625
     }
   },
-  "updatedAt": "2026-09-07T04:45:41Z"
+  "updatedAt": "2026-09-07T12:37:43Z"
 }
