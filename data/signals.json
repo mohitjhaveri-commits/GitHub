@@ -6,43 +6,43 @@
       "asof": "2026-10-02",
       "previous": 102.30999755859375,
       "source": "Yahoo (BZ=F)",
-      "value": 99.81999969482422
+      "value": 102.69999694824219
     },
     "btc": {
       "asof": "2026-10-02",
-      "previous": 83875.46666298865,
+      "previous": 84700.62620884222,
       "source": "CoinGecko (bitcoin)",
-      "value": 86881.0
+      "value": 84506.0
     },
     "dow": {
-      "asof": "2026-10-01",
-      "previous": 50906.05078125,
+      "asof": "2026-10-02",
+      "previous": 50926.55859375,
       "source": "Yahoo (^DJI)",
-      "value": 50926.55859375
+      "value": 51176.9609375
     },
     "dxy": {
       "asof": "2026-10-02",
       "previous": 102.0999984741211,
       "source": "Yahoo (DX-Y.NYB)",
-      "value": 102.05699920654297
+      "value": 101.92400360107422
     },
     "eth": {
       "asof": "2026-10-02",
-      "previous": 2704.3208704221615,
+      "previous": 2698.285255909822,
       "source": "CoinGecko (ethereum)",
-      "value": 2758.7
+      "value": 2661.77
     },
     "eurusd": {
       "asof": "2026-10-02",
-      "previous": 1.1327208280563354,
+      "previous": 1.124985933303833,
       "source": "Yahoo (EURUSD=X)",
-      "value": 1.1253657341003418
+      "value": 1.1257457733154297
     },
     "gold_30d_pct": {
       "asof": "2026-10-02",
       "previous": -7.546256896987725,
       "source": "Yahoo (GC=F, 30d % change)",
-      "value": -7.855363900063521
+      "value": -8.734738006245736
     },
     "in10y": {
       "asof": "2026-10-02",
@@ -54,7 +54,7 @@
       "asof": "2026-10-02",
       "previous": null,
       "source": "derived (in10y - us10y)",
-      "value": 1.9100000000000001
+      "value": 1.96
     },
     "india_5y_cds": null,
     "indiavix": {
@@ -65,15 +65,15 @@
     },
     "mcx_gold_inr_10g": {
       "asof": "2026-10-02",
-      "previous": 129604.20478882299,
+      "previous": 130006.41686876789,
       "source": "derived (XAUUSD * USDINR)",
-      "value": 130377.38931340593
+      "value": 129173.00372515504
     },
     "nasdaq100": {
-      "asof": "2026-10-01",
-      "previous": 30408.5,
+      "asof": "2026-10-02",
+      "previous": 30501.560546875,
       "source": "Yahoo (^NDX)",
-      "value": 30501.560546875
+      "value": 30807.931640625
     },
     "nhb_refi_rate": null,
     "nifty": {
@@ -96,77 +96,77 @@
     },
     "sol": {
       "asof": "2026-10-02",
-      "previous": 117.64566180218078,
+      "previous": 117.97957676452877,
       "source": "CoinGecko (solana)",
-      "value": 122.46
+      "value": 118.06
     },
     "sp500": {
-      "asof": "2026-10-01",
-      "previous": 7651.5400390625,
+      "asof": "2026-10-02",
+      "previous": 7666.4501953125,
       "source": "Yahoo (^GSPC)",
-      "value": 7666.4501953125
+      "value": 7722.72021484375
     },
     "tbill_3m_yield": null,
     "us10y": {
-      "asof": "2026-09-30",
-      "previous": 5.26,
+      "asof": "2026-10-01",
+      "previous": 5.29,
       "source": "FRED (DGS10)",
-      "value": 5.29
+      "value": 5.24
     },
     "us10y_2y_spread": {
-      "asof": "2026-09-30",
-      "previous": 0.3700000000000001,
+      "asof": "2026-10-01",
+      "previous": 0.41000000000000014,
       "source": "derived (us10y - us2y)",
-      "value": 0.41000000000000014
+      "value": 0.45999999999999996
     },
     "us2y": {
-      "asof": "2026-09-30",
-      "previous": 4.89,
+      "asof": "2026-10-01",
+      "previous": 4.88,
       "source": "FRED (DGS2)",
-      "value": 4.88
+      "value": 4.78
     },
     "us30y": {
-      "asof": "2026-09-30",
-      "previous": 5.59,
+      "asof": "2026-10-01",
+      "previous": 5.64,
       "source": "FRED (DGS30)",
-      "value": 5.64
+      "value": 5.61
     },
     "us_ig_oas": {
-      "asof": "2026-09-30",
+      "asof": "2026-10-01",
       "previous": 0.84,
       "source": "FRED (BAMLC0A0CM)",
-      "value": 0.84
+      "value": 0.86
     },
     "usdinr": {
       "asof": "2026-10-02",
-      "previous": 95.9271011352539,
+      "previous": 96.22480010986328,
       "source": "Yahoo (USDINR=X)",
       "value": 96.30000305175781
     },
     "usdjpy": {
       "asof": "2026-10-02",
-      "previous": 157.55799865722656,
+      "previous": 157.927001953125,
       "source": "Yahoo (USDJPY=X)",
-      "value": 157.1060028076172
+      "value": 157.8300018310547
     },
     "vix": {
       "asof": "2026-10-02",
       "previous": 16.389999389648438,
       "source": "Yahoo (^VIX)",
-      "value": 16.049999237060547
+      "value": 15.3100004196167
     },
     "wti": {
       "asof": "2026-10-02",
       "previous": 92.87000274658203,
       "source": "Yahoo (CL=F)",
-      "value": 89.79000091552734
+      "value": 91.26000213623047
     },
     "xauusd": {
       "asof": "2026-10-02",
       "previous": 4202.2998046875,
       "source": "Yahoo (GC=F)",
-      "value": 4211.0
+      "value": 4172.10009765625
     }
   },
-  "updatedAt": "2026-10-02T12:39:42Z"
+  "updatedAt": "2026-10-02T22:16:32Z"
 }
