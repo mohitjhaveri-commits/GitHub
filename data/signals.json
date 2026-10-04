@@ -9,10 +9,10 @@
       "value": 102.25
     },
     "btc": {
-      "asof": "2026-10-03",
-      "previous": 84495.17939961728,
+      "asof": "2026-10-04",
+      "previous": 84637.3191373453,
       "source": "CoinGecko (bitcoin)",
-      "value": 84686.0
+      "value": 84909.0
     },
     "dow": {
       "asof": "2026-10-02",
@@ -27,10 +27,10 @@
       "value": 101.93000030517578
     },
     "eth": {
-      "asof": "2026-10-03",
-      "previous": 2663.4489124670276,
+      "asof": "2026-10-04",
+      "previous": 2676.593270899534,
       "source": "CoinGecko (ethereum)",
-      "value": 2687.06
+      "value": 2694.89
     },
     "eurusd": {
       "asof": "2026-10-02",
@@ -45,13 +45,13 @@
       "value": -8.94912075940906
     },
     "in10y": {
-      "asof": "2026-10-03",
+      "asof": "2026-10-04",
       "previous": null,
       "source": "economictimes.indiatimes.com (median plausible)",
       "value": 7.2
     },
     "ind_us_10y_spread": {
-      "asof": "2026-10-03",
+      "asof": "2026-10-04",
       "previous": null,
       "source": "derived (in10y - us10y)",
       "value": 1.96
@@ -89,16 +89,16 @@
       "value": -2.7799836166183685
     },
     "sbi_1y_mclr": {
-      "asof": "2026-10-03",
+      "asof": "2026-10-04",
       "previous": null,
       "source": "sbi.co.in (MCLR page)",
       "value": 8.7
     },
     "sol": {
-      "asof": "2026-10-03",
-      "previous": 118.07541166464556,
+      "asof": "2026-10-04",
+      "previous": 119.59253270409418,
       "source": "CoinGecko (solana)",
-      "value": 119.74
+      "value": 120.87
     },
     "sp500": {
       "asof": "2026-10-02",
@@ -138,13 +138,13 @@
       "value": 0.86
     },
     "usdinr": {
-      "asof": "2026-10-03",
+      "asof": "2026-10-04",
       "previous": 96.22480010986328,
       "source": "Yahoo (USDINR=X)",
       "value": 96.30000305175781
     },
     "usdjpy": {
-      "asof": "2026-10-03",
+      "asof": "2026-10-04",
       "previous": 157.927001953125,
       "source": "Yahoo (USDJPY=X)",
       "value": 157.8300018310547
@@ -168,5 +168,5 @@
       "value": 4162.2998046875
     }
   },
-  "updatedAt": "2026-10-03T21:19:24Z"
+  "updatedAt": "2026-10-04T05:57:27Z"
 }
