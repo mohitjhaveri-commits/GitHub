@@ -9,10 +9,10 @@
       "value": 104.72000122070312
     },
     "btc": {
-      "asof": "2026-10-10",
-      "previous": 82473.86129376075,
+      "asof": "2026-10-11",
+      "previous": 82717.07415165655,
       "source": "CoinGecko (bitcoin)",
-      "value": 83010.0
+      "value": 82995.0
     },
     "dow": {
       "asof": "2026-10-09",
@@ -27,10 +27,10 @@
       "value": 102.20999908447266
     },
     "eth": {
-      "asof": "2026-10-10",
-      "previous": 2482.3387453867604,
+      "asof": "2026-10-11",
+      "previous": 2494.9493052592825,
       "source": "CoinGecko (ethereum)",
-      "value": 2506.94
+      "value": 2503.01
     },
     "eurusd": {
       "asof": "2026-10-09",
@@ -45,13 +45,13 @@
       "value": -9.599060791434392
     },
     "in10y": {
-      "asof": "2026-10-10",
+      "asof": "2026-10-11",
       "previous": null,
       "source": "economictimes.indiatimes.com",
       "value": 6.94
     },
     "ind_us_10y_spread": {
-      "asof": "2026-10-10",
+      "asof": "2026-10-11",
       "previous": null,
       "source": "derived (in10y - us10y)",
       "value": 1.7200000000000006
@@ -89,16 +89,16 @@
       "value": 0.43930168175401507
     },
     "sbi_1y_mclr": {
-      "asof": "2026-10-10",
+      "asof": "2026-10-11",
       "previous": null,
       "source": "sbi.co.in (MCLR page)",
       "value": 8.7
     },
     "sol": {
-      "asof": "2026-10-10",
-      "previous": 109.00579400752797,
+      "asof": "2026-10-11",
+      "previous": 110.08397675692807,
       "source": "CoinGecko (solana)",
-      "value": 110.2
+      "value": 109.38
     },
     "sp500": {
       "asof": "2026-10-09",
@@ -138,7 +138,7 @@
       "value": 0.82
     },
     "usdinr": {
-      "asof": "2026-10-10",
+      "asof": "2026-10-11",
       "previous": 96.82330322265625,
       "source": "Yahoo (USDINR=X)",
       "value": 96.7300033569336
@@ -168,5 +168,5 @@
       "value": 4216.2998046875
     }
   },
-  "updatedAt": "2026-10-10T21:47:10Z"
+  "updatedAt": "2026-10-11T05:50:51Z"
 }
