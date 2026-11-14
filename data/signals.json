@@ -10,9 +10,9 @@
     },
     "btc": {
       "asof": "2026-11-14",
-      "previous": 68677.78936930356,
+      "previous": 68805.92659396287,
       "source": "CoinGecko (bitcoin)",
-      "value": 67293.0
+      "value": 65798.0
     },
     "dow": {
       "asof": "2026-11-13",
@@ -28,9 +28,9 @@
     },
     "eth": {
       "asof": "2026-11-14",
-      "previous": 1932.7426802089976,
+      "previous": 1935.8272115896439,
       "source": "CoinGecko (ethereum)",
-      "value": 1906.41
+      "value": 1836.8
     },
     "eurusd": {
       "asof": "2026-11-13",
@@ -92,13 +92,13 @@
       "asof": "2026-11-14",
       "previous": null,
       "source": "sbi.co.in (MCLR page)",
-      "value": 8.7
+      "value": 8.85
     },
     "sol": {
       "asof": "2026-11-14",
-      "previous": 79.59384326556844,
+      "previous": 79.89716206942455,
       "source": "CoinGecko (solana)",
-      "value": 75.76
+      "value": 72.58
     },
     "sp500": {
       "asof": "2026-11-13",
@@ -168,5 +168,5 @@
       "value": 3886.300048828125
     }
   },
-  "updatedAt": "2026-11-14T06:27:51Z"
+  "updatedAt": "2026-11-14T18:07:00Z"
 }
