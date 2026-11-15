@@ -9,10 +9,10 @@
       "value": 95.83999633789062
     },
     "btc": {
-      "asof": "2026-11-14",
-      "previous": 68229.97899446358,
+      "asof": "2026-11-15",
+      "previous": 67297.15844112096,
       "source": "CoinGecko (bitcoin)",
-      "value": 64188.0
+      "value": 64398.0
     },
     "dow": {
       "asof": "2026-11-13",
@@ -27,10 +27,10 @@
       "value": 103.41000366210938
     },
     "eth": {
-      "asof": "2026-11-14",
-      "previous": 1922.7132075717382,
+      "asof": "2026-11-15",
+      "previous": 1904.1681926978963,
       "source": "CoinGecko (ethereum)",
-      "value": 1766.44
+      "value": 1793.36
     },
     "eurusd": {
       "asof": "2026-11-13",
@@ -45,13 +45,13 @@
       "value": -6.630943680427573
     },
     "in10y": {
-      "asof": "2026-11-14",
+      "asof": "2026-11-15",
       "previous": null,
       "source": "economictimes.indiatimes.com (median plausible)",
       "value": 7.05
     },
     "ind_us_10y_spread": {
-      "asof": "2026-11-14",
+      "asof": "2026-11-15",
       "previous": null,
       "source": "derived (in10y - us10y)",
       "value": 1.9500000000000002
@@ -89,16 +89,16 @@
       "value": 2.4767130798466797
     },
     "sbi_1y_mclr": {
-      "asof": "2026-11-14",
+      "asof": "2026-11-15",
       "previous": null,
       "source": "sbi.co.in (MCLR page)",
       "value": 8.85
     },
     "sol": {
-      "asof": "2026-11-14",
-      "previous": 78.30088278170768,
+      "asof": "2026-11-15",
+      "previous": 75.67786569510189,
       "source": "CoinGecko (solana)",
-      "value": 69.87
+      "value": 70.54
     },
     "sp500": {
       "asof": "2026-11-13",
@@ -138,7 +138,7 @@
       "value": 0.89
     },
     "usdinr": {
-      "asof": "2026-11-14",
+      "asof": "2026-11-15",
       "previous": 94.03379821777344,
       "source": "Yahoo (USDINR=X)",
       "value": 94.23999786376953
@@ -168,5 +168,5 @@
       "value": 3886.300048828125
     }
   },
-  "updatedAt": "2026-11-14T22:27:38Z"
+  "updatedAt": "2026-11-15T06:37:17Z"
 }
